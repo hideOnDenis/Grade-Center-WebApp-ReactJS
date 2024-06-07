@@ -1,8 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "../components/Navbar.jsx";
 import gradeImage from "../assets/images/gradeImage.jpg";
 
 function HomePage() {
+  useEffect(() => {
+    // Set the body style on component mount
+    document.body.style.margin = "0";
+    document.body.style.display = "flex";
+    document.body.style.placeItems = "center";
+    document.body.style.minWidth = "320px";
+    document.body.style.minHeight = "100vh";
+
+    // Reset the body style on component unmount
+    return () => {
+      document.body.style.margin = "";
+      document.body.style.display = "";
+      document.body.style.placeItems = "";
+      document.body.style.minWidth = "";
+      document.body.style.minHeight = "";
+    };
+  }, []);
+
   return (
     <div
       style={{
