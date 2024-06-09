@@ -8,7 +8,7 @@ import {
   Button,
 } from "@mui/material";
 
-const StudentDashboard = () => {
+export default function StudentDashboard() {
   // Mock data for demonstration
   const studentInfo = {
     grades: {
@@ -87,6 +87,4 @@ const StudentDashboard = () => {
       </Box>
     </Box>
   );
-};
-
-export default StudentDashboard;
+}
