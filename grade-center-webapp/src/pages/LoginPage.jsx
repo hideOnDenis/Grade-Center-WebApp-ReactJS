@@ -1,4 +1,6 @@
 import * as React from "react";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../features/auth/authSlice"; // Ensure the path matches where your authSlice is located
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -12,20 +14,31 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom"; // React Router hook
 import Copyright from "../components/Copyright.jsx";
 
 const defaultTheme = createTheme();
 
 export default function Login() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate(); // Hook for navigation
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
+    const credentials = {
+      username: data.get("username"), // Ensure this matches the name attribute of your input field
       password: data.get("password"),
-    });
+    };
+    console.log("Logging in with:", credentials); // Log credentials for debugging
+    dispatch(loginUser(credentials))
+      .unwrap()
+      .then((response) => {
+        console.log("Access Token:", response.access_token); // Log the access_token from the response
+        navigate("/student/dashboard"); // Navigate to the dashboard upon successful login
+      })
+      .catch((error) => console.error("Failed login:", error)); // Handle login errors
   };
-
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
@@ -54,10 +67,10 @@ export default function Login() {
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
+              id="username"
+              label="Username"
+              name="username"
+              autoComplete="username"
               autoFocus
             />
             <TextField
@@ -83,9 +96,9 @@ export default function Login() {
               Sign In
             </Button>
             <Grid container>
-              <Grid item xs></Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/signup" variant="body2">
+                  {" "}
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>
