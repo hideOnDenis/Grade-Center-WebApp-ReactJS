@@ -8,6 +8,7 @@ import StudentDashboard from "./pages/StudentDashboard.jsx";
 import SchedulePage from "./pages/SchedulePage.jsx";
 import StudentPage from "./pages/StudentPage.jsx";
 import ParentDashboard from "./pages/ParentDashboard.jsx";
+import TeacherDashboard from "./pages/TeacherDashboard.jsx";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/schedule" element={<SchedulePage />} />
         <Route path="/students" element={<StudentPage />} />
         <Route path="/parent/dashboard" element={<ParentDashboard />} />
+        <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
       </Routes>
     </Router>
   );
