@@ -34,12 +34,35 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+export const loadUser = createAsyncThunk(
+  "auth/loadUser",
+  async (_, { getState, rejectWithValue }) => {
+    try {
+      const token =
+        getState().auth.accessToken || localStorage.getItem("accessToken");
+      if (!token) {
+        console.log("No token found");
+        throw new Error("No token found");
+      }
+      const response = await axios.get(`${domain}/info`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log("User loaded", response.data);
+      return { user: response.data, accessToken: token };
+    } catch (error) {
+      console.error("Failed to load user", error);
+      return rejectWithValue("Failed to load user");
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState: {
     user: null,
-    isAuthenticated: false,
-    status: "idle", // 'idle' | 'loading' | 'succeeded' | 'failed'
+    isAuthenticated: Boolean(localStorage.getItem("accessToken")),
+    accessToken: localStorage.getItem("accessToken"),
+    status: "idle",
     error: null,
   },
   reducers: {
@@ -47,6 +70,7 @@ const authSlice = createSlice({
       localStorage.removeItem("accessToken");
       state.user = null;
       state.isAuthenticated = false;
+      state.accessToken = null;
     },
   },
   extraReducers: (builder) => {
@@ -72,6 +96,15 @@ const authSlice = createSlice({
       .addCase(loginUser.rejected, (state, action) => {
         state.error = action.payload;
         state.status = "failed";
+      })
+      .addCase(loadUser.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+        state.accessToken = action.payload.accessToken;
+        state.isAuthenticated = true;
+      })
+      .addCase(loadUser.rejected, (state, action) => {
+        localStorage.removeItem("accessToken");
+        state.error = action.payload;
       });
   },
 });

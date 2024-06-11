@@ -34,7 +34,6 @@ export default function UsersPage() {
           Back to Dashboard
         </Button>
       </Box>
-
       <DataGrid
         rows={rows}
         columns={columns}

@@ -7,6 +7,7 @@ import {
   Grid,
   Button,
 } from "@mui/material";
+import LogoutBtn from "../components/LogoutBtn"; // Ensure this path is correct
 
 export default function StudentDashboard() {
   // Mock data for demonstration
@@ -73,17 +74,20 @@ export default function StudentDashboard() {
           </Card>
         </Grid>
       </Grid>
-      <Box marginTop={2}>
-        <Button variant="contained" color="primary">
-          View All Grades
-        </Button>
-        <Button
-          variant="contained"
-          color="secondary"
-          style={{ marginLeft: "10px" }}
-        >
-          View Full Schedule
-        </Button>
+      <Box marginTop={2} display="flex" justifyContent="space-between">
+        <Box>
+          <Button variant="contained" color="primary">
+            View All Grades
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            style={{ marginLeft: "10px" }}
+          >
+            View Full Schedule
+          </Button>
+        </Box>
+        <LogoutBtn />
       </Box>
     </Box>
   );

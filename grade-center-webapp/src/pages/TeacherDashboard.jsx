@@ -8,7 +8,7 @@ import {
   Button,
 } from "@mui/material";
 
-const TeacherDashboard = () => {
+export default function TeacherDashboard() {
   // Mock data for demonstration
   const todayClasses = [
     { time: "09:00 AM", subject: "Mathematics", room: "101" },
@@ -76,6 +76,4 @@ const TeacherDashboard = () => {
       </Grid>
     </Box>
   );
-};
-
-export default TeacherDashboard;
+}

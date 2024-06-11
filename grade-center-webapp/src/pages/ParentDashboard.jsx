@@ -11,7 +11,7 @@ import {
   Button,
 } from "@mui/material";
 
-const ParentDashboard = () => {
+export default function ParentDashboard() {
   const childPerformance = {
     name: "John Doe",
     recentGrades: ["A", "A-", "B+", "A"],
@@ -90,6 +90,4 @@ const ParentDashboard = () => {
       </Grid>
     </Box>
   );
-};
-
-export default ParentDashboard;
+}
