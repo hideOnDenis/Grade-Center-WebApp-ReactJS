@@ -25,6 +25,7 @@ function App() {
       dispatch(loadUser());
     }
   }, [dispatch]);
+
   return (
     <Router>
       <Routes>
@@ -32,17 +33,23 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
 
         {/* Protected routes */}
-        <Route element={<ProtectedRoute />}>
+        <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
           <Route path="/admin/users" element={<UsersPage />} />
-          <Route path="/schools" element={<SchoolsPage />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        </Route>
+        <Route element={<ProtectedRoute allowedRoles={["director"]} />}>
+          <Route path="/director/dashboard" element={<DirectorDashboard />} />
+        </Route>
+        <Route element={<ProtectedRoute allowedRoles={["teacher"]} />}>
+          <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
+        </Route>
+        <Route element={<ProtectedRoute allowedRoles={["parent"]} />}>
+          <Route path="/parent/dashboard" element={<ParentDashboard />} />
+          <Route path="/parent/schedule" element={<SchedulePageParent />} />
+        </Route>
+        <Route element={<ProtectedRoute allowedRoles={["student"]} />}>
           <Route path="/student/dashboard" element={<StudentDashboard />} />
           <Route path="/student/schedule" element={<SchedulePageStudent />} />
-          <Route path="/students" element={<StudentPage />} />
-          <Route path="/parent/dashboard" element={<ParentDashboard />} />
-          <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/director/dashboard" element={<DirectorDashboard />} />
-          <Route path="/parent/schedule" element={<SchedulePageParent />} />
         </Route>
       </Routes>
     </Router>

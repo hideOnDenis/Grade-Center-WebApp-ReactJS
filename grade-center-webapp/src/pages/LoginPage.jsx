@@ -19,7 +19,7 @@ import Copyright from "../components/Copyright.jsx";
 
 const defaultTheme = createTheme();
 
-export default function Login() {
+export default function LoginPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate(); // Hook for navigation
 
@@ -35,10 +35,30 @@ export default function Login() {
       .unwrap()
       .then((response) => {
         console.log("Access Token:", response.access_token); // Log the access_token from the response
-        navigate("/student/dashboard"); // Navigate to the dashboard upon successful login
+        const userRole = response.role;
+        switch (userRole) {
+          case "admin":
+            navigate("/admin/dashboard");
+            break;
+          case "director":
+            navigate("/director/dashboard");
+            break;
+          case "teacher":
+            navigate("/teacher/dashboard");
+            break;
+          case "parent":
+            navigate("/parent/dashboard");
+            break;
+          case "student":
+            navigate("/student/dashboard");
+            break;
+          default:
+            navigate("/"); // default to home if role is not recognized
+        }
       })
       .catch((error) => console.error("Failed login:", error)); // Handle login errors
   };
+
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">

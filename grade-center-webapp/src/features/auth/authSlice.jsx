@@ -24,8 +24,10 @@ export const loginUser = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${domain}/login`, credentials);
-      localStorage.setItem("accessToken", response.data.access_token); // Save the token to localStorage using the correct key
-      return response.data;
+      const { access_token, role } = response.data;
+      localStorage.setItem("accessToken", access_token); // Save the token to localStorage using the correct key
+      localStorage.setItem("userRole", role);
+      return { access_token, role };
     } catch (error) {
       const message =
         error.response?.data?.message || error.message || "Failed to login";
@@ -60,6 +62,7 @@ const authSlice = createSlice({
   name: "auth",
   initialState: {
     user: null,
+    role: localStorage.getItem("userRole"),
     isAuthenticated: Boolean(localStorage.getItem("accessToken")),
     accessToken: localStorage.getItem("accessToken"),
     status: "idle",
@@ -68,7 +71,9 @@ const authSlice = createSlice({
   reducers: {
     logoutUser(state) {
       localStorage.removeItem("accessToken");
+      localStorage.removeItem("userRole");
       state.user = null;
+      state.role = null;
       state.isAuthenticated = false;
       state.accessToken = null;
     },
@@ -78,7 +83,7 @@ const authSlice = createSlice({
       .addCase(registerUser.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(registerUser.fulfilled, (state, action) => {
+      .addCase(registerUser.fulfilled, (state) => {
         state.status = "succeeded";
       })
       .addCase(registerUser.rejected, (state, action) => {
@@ -89,7 +94,8 @@ const authSlice = createSlice({
         state.status = "loading";
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        state.user = action.payload.user;
+        state.accessToken = action.payload.access_token;
+        state.role = action.payload.role;
         state.isAuthenticated = true;
         state.status = "succeeded";
       })
@@ -104,6 +110,7 @@ const authSlice = createSlice({
       })
       .addCase(loadUser.rejected, (state, action) => {
         localStorage.removeItem("accessToken");
+        localStorage.removeItem("userRole");
         state.error = action.payload;
       });
   },
