@@ -1,9 +1,13 @@
+import React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 export default function UsersPage() {
+  const navigate = useNavigate(); // Initialize the navigate function
+
   // Static columns definition for display purposes
   const columns = [
     { field: "email", headerName: "Email", width: 200 },
@@ -29,8 +33,11 @@ export default function UsersPage() {
         <Typography variant="h4" component="h1">
           Users
         </Typography>
-        {/* Placeholder button, does nothing */}
-        <Button variant="contained" color="success">
+        <Button
+          variant="contained"
+          color="success"
+          onClick={() => navigate("/admin/dashboard")} // Add onClick handler to navigate
+        >
           Back to Dashboard
         </Button>
       </Box>

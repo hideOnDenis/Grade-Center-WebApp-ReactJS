@@ -7,9 +7,12 @@ import {
   Grid,
   Button,
 } from "@mui/material";
-import LogoutBtn from "../components/LogoutBtn"; // Ensure this path is correct
+import LogoutBtn from "../components/LogoutBtn";
+import { useNavigate } from "react-router-dom";
 
 export default function StudentDashboard() {
+  const navigate = useNavigate();
+
   // Mock data for demonstration
   const studentInfo = {
     grades: {
@@ -27,7 +30,7 @@ export default function StudentDashboard() {
   };
 
   return (
-    <Box padding={3}>
+    <Box padding={3} sx={{ position: "relative", minHeight: "100vh" }}>
       <Typography variant="h4" component="h1" gutterBottom>
         Student Dashboard
       </Typography>
@@ -83,6 +86,7 @@ export default function StudentDashboard() {
             variant="contained"
             color="secondary"
             style={{ marginLeft: "10px" }}
+            onClick={() => navigate("/student/schedule")} // Ensure this matches the correct route
           >
             View Full Schedule
           </Button>

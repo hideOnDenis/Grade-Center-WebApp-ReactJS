@@ -5,12 +5,13 @@ import LoginPage from "./pages/LoginPage";
 import UsersPage from "./pages/UsersPage";
 import SchoolsPage from "./pages/SchoolsPage";
 import StudentDashboard from "./pages/StudentDashboard";
-import SchedulePage from "./pages/SchedulePage";
+import SchedulePageStudent from "./pages/SchedulePageStudent.jsx";
 import StudentPage from "./pages/StudentPage";
 import ParentDashboard from "./pages/ParentDashboard";
 import TeacherDashboard from "./pages/TeacherDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminDashboard from "./pages/AdminDashboard";
+import DirectorDashboard from "./pages/DirectorDashboard.jsx";
 import { useDispatch } from "react-redux";
 import { loadUser } from "./features/auth/authSlice";
 import { useEffect } from "react";
@@ -31,14 +32,15 @@ function App() {
 
         {/* Protected routes */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/users" element={<UsersPage />} />
+          <Route path="/admin/users" element={<UsersPage />} />
           <Route path="/schools" element={<SchoolsPage />} />
           <Route path="/student/dashboard" element={<StudentDashboard />} />
-          <Route path="/schedule" element={<SchedulePage />} />
+          <Route path="/student/schedule" element={<SchedulePageStudent />} />
           <Route path="/students" element={<StudentPage />} />
           <Route path="/parent/dashboard" element={<ParentDashboard />} />
           <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/director/dashboard" element={<DirectorDashboard />} />
         </Route>
       </Routes>
     </Router>

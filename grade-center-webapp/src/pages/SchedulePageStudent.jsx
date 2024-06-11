@@ -8,9 +8,13 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Button,
+  Box,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
-export default function SchedulePage() {
+export default function SchedulePageStudent() {
+  const navigate = useNavigate();
   // Static schedule data
   const schedule = [
     {
@@ -80,7 +84,23 @@ export default function SchedulePage() {
   ];
 
   return (
-    <Paper sx={{ width: "100%", height: "100vh", overflow: "hidden" }}>
+    <Box
+      sx={{
+        width: "100%",
+        height: "100vh",
+        overflow: "hidden",
+        position: "relative",
+      }}
+    >
+      <Box sx={{ position: "absolute", top: 16, right: 16 }}>
+        <Button
+          variant="contained"
+          color="success"
+          onClick={() => navigate("/student/dashboard")}
+        >
+          Back to Dashboard
+        </Button>
+      </Box>
       <Typography variant="h4" component="h2" sx={{ padding: 2 }}>
         Weekly Schedule
       </Typography>
@@ -112,6 +132,6 @@ export default function SchedulePage() {
           </TableBody>
         </Table>
       </TableContainer>
-    </Paper>
+    </Box>
   );
 }
