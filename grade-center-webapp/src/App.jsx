@@ -15,6 +15,7 @@ import DirectorDashboard from "./pages/DirectorDashboard.jsx";
 import { useDispatch } from "react-redux";
 import { loadUser } from "./features/auth/authSlice";
 import { useEffect } from "react";
+import SchedulePageParent from "./pages/SchedulePageParent.jsx";
 
 function App() {
   const dispatch = useDispatch();
@@ -41,6 +42,7 @@ function App() {
           <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/director/dashboard" element={<DirectorDashboard />} />
+          <Route path="/parent/schedule" element={<SchedulePageParent />} />
         </Route>
       </Routes>
     </Router>
