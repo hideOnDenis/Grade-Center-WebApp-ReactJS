@@ -1,14 +1,15 @@
-import "./App.css";
-import HomePage from "./pages/HomePage";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LoginPage from "./pages/LoginPage.jsx";
-import UsersPage from "./pages/UsersPage.jsx";
-import SchoolsPage from "./pages/SchoolsPage.jsx";
-import StudentDashboard from "./pages/StudentDashboard.jsx";
-import SchedulePage from "./pages/SchedulePage.jsx";
-import StudentPage from "./pages/StudentPage.jsx";
-import ParentDashboard from "./pages/ParentDashboard.jsx";
-import TeacherDashboard from "./pages/TeacherDashboard.jsx";
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
+import UsersPage from "./pages/UsersPage";
+import SchoolsPage from "./pages/SchoolsPage";
+import StudentDashboard from "./pages/StudentDashboard";
+import SchedulePage from "./pages/SchedulePage";
+import StudentPage from "./pages/StudentPage";
+import ParentDashboard from "./pages/ParentDashboard";
+import TeacherDashboard from "./pages/TeacherDashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -16,13 +17,17 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/users" element={<UsersPage />} />
-        <Route path="/schools" element={<SchoolsPage />} />
-        <Route path="/student/dashboard" element={<StudentDashboard />} />
-        <Route path="/schedule" element={<SchedulePage />} />
-        <Route path="/students" element={<StudentPage />} />
-        <Route path="/parent/dashboard" element={<ParentDashboard />} />
-        <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
+
+        {/* Protected routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/users" element={<UsersPage />} />
+          <Route path="/schools" element={<SchoolsPage />} />
+          <Route path="/student/dashboard" element={<StudentDashboard />} />
+          <Route path="/schedule" element={<SchedulePage />} />
+          <Route path="/students" element={<StudentPage />} />
+          <Route path="/parent/dashboard" element={<ParentDashboard />} />
+          <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
+        </Route>
       </Routes>
     </Router>
   );
