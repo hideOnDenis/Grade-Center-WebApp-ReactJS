@@ -8,6 +8,7 @@ export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async (userData, { rejectWithValue }) => {
     try {
+      console.log("User data being sent to the server:", userData); // Debugging log
       const response = await axios.post(`${domain}/register`, userData);
       return response.data;
     } catch (error) {

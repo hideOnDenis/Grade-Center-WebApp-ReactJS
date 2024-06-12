@@ -15,9 +15,12 @@ import {
 } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { registerUser } from "../features/auth/authSlice";
 
 export default function UsersPage() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [userData, setUserData] = useState({
     username: "",
@@ -25,14 +28,12 @@ export default function UsersPage() {
     role: "",
   });
 
-  // Updated columns with User ID and Role
   const columns = [
     { field: "id", headerName: "User ID", width: 100 },
     { field: "email", headerName: "Email", width: 200 },
     { field: "role", headerName: "Role", width: 130 },
   ];
 
-  // Updated rows with role data
   const rows = [
     { id: 1, email: "user@example.com", role: "Admin" },
     { id: 2, email: "anotheruser@example.com", role: "User" },
@@ -45,8 +46,19 @@ export default function UsersPage() {
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
   const handleSubmit = () => {
-    console.log(userData);
+    console.log("Submitting user data:", userData); // Debugging log
+    dispatch(registerUser(userData))
+      .unwrap()
+      .then((response) => {
+        console.log("User registered successfully", response);
+        // Optionally, refresh the user list or show a success message
+      })
+      .catch((error) => {
+        console.error("Failed to register user", error);
+        // Optionally, show an error message
+      });
     handleClose();
   };
 
@@ -117,11 +129,11 @@ export default function UsersPage() {
               label="Role"
               onChange={handleChange}
             >
-              <MenuItem value="admin">Admin</MenuItem>
-              <MenuItem value="director">Director</MenuItem>
-              <MenuItem value="teacher">Teacher</MenuItem>
-              <MenuItem value="parent">Parent</MenuItem>
-              <MenuItem value="student">Student</MenuItem>
+              <MenuItem value="admin">admin</MenuItem>
+              <MenuItem value="director">director</MenuItem>
+              <MenuItem value="teacher">teacher</MenuItem>
+              <MenuItem value="parent">parent</MenuItem>
+              <MenuItem value="student">student</MenuItem>
             </Select>
           </FormControl>
         </DialogContent>

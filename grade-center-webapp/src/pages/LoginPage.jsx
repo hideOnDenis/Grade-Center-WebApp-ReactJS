@@ -53,7 +53,7 @@ export default function LoginPage() {
             navigate("/student/dashboard");
             break;
           default:
-            navigate("/"); // default to home if role is not recognized
+            navigate("/login"); // default to home if role is not recognized
         }
       })
       .catch((error) => console.error("Failed login:", error)); // Handle login errors
