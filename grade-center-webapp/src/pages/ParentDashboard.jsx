@@ -10,9 +10,13 @@ import {
   ListItemText,
   Button,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import LogoutBtn from "../components/LogoutBtn"; // Adjust the import path as necessary
+import UserInfo from "../components/UserInfo"; // Import the UserInfo component
 
 export default function ParentDashboard() {
+  const navigate = useNavigate();
+
   const childPerformance = {
     name: "John Doe",
     recentGrades: ["A", "A-", "B+", "A"],
@@ -30,8 +34,7 @@ export default function ParentDashboard() {
   };
 
   const handleViewFullSchedule = () => {
-    console.log("See full schedule clicked");
-    // Here you would typically handle navigation to the full schedule page
+    navigate("/parent/schedule");
   };
 
   return (
@@ -92,6 +95,7 @@ export default function ParentDashboard() {
       <Box display="flex" justifyContent="flex-end" marginTop={2}>
         <LogoutBtn />
       </Box>
+      <UserInfo /> {/* Include the UserInfo component */}
     </Box>
   );
 }

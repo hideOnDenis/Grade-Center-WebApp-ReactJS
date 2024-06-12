@@ -18,7 +18,7 @@ export default function SchedulePageParent() {
       </Typography>
       <Button
         variant="contained"
-        color="primary"
+        color="success"
         sx={{ position: "absolute", top: 16, right: 16 }}
         onClick={() => navigate("/parent/dashboard")}
       >

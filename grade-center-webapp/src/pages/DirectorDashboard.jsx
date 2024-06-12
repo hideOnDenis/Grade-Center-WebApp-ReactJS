@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import LogoutBtn from "../components/LogoutBtn";
+import UserInfo from "../components/UserInfo"; // Import UserInfo component
 
 export default function DirectorDashboard() {
   const navigate = useNavigate();
@@ -61,22 +62,8 @@ export default function DirectorDashboard() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={4}>
-          <Card>
-            <CardContent>
-              <Typography variant="h5" component="h2">
-                Ongoing Projects
-              </Typography>
-              <Typography variant="h6">
-                {directorInfo.ongoingProjects}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
       </Grid>
-      <Box display="flex" justifyContent="flex-end" marginTop={2}>
-        <LogoutBtn />
-      </Box>
+      <UserInfo /> {/* Include the UserInfo component */}
     </Box>
   );
 }

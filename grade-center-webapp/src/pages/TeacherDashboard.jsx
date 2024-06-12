@@ -7,7 +7,7 @@ import {
   Grid,
   Button,
 } from "@mui/material";
-import LogoutBtn from "../components/LogoutBtn"; // Adjust the import path as necessary
+import UserInfo from "../components/UserInfo"; // Adjust the import path as necessary
 
 export default function TeacherDashboard() {
   // Mock data for demonstration
@@ -75,9 +75,7 @@ export default function TeacherDashboard() {
           </Card>
         </Grid>
       </Grid>
-      <Box display="flex" justifyContent="flex-end" marginTop={2}>
-        <LogoutBtn />
-      </Box>
+      <UserInfo />
     </Box>
   );
 }

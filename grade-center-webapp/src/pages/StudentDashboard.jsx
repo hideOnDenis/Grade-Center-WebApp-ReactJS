@@ -7,7 +7,7 @@ import {
   Grid,
   Button,
 } from "@mui/material";
-import LogoutBtn from "../components/LogoutBtn";
+import UserInfo from "../components/UserInfo"; // Adjust the import path as necessary
 import { useNavigate } from "react-router-dom";
 
 export default function StudentDashboard() {
@@ -91,7 +91,7 @@ export default function StudentDashboard() {
             View Full Schedule
           </Button>
         </Box>
-        <LogoutBtn />
+        <UserInfo />
       </Box>
     </Box>
   );

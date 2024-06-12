@@ -7,11 +7,11 @@ import {
   Grid,
   Button,
 } from "@mui/material";
-import LogoutBtn from "../components/LogoutBtn";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
+import UserInfo from "../components/UserInfo";
 
 export default function AdminDashboard() {
-  const navigate = useNavigate(); // Initialize the navigate function
+  const navigate = useNavigate();
 
   // Mock data for demonstration
   const systemStats = {
@@ -44,7 +44,7 @@ export default function AdminDashboard() {
                 variant="contained"
                 color="primary"
                 sx={{ mt: 2 }}
-                onClick={() => navigate("/admin/users")} // Add onClick handler to navigate
+                onClick={() => navigate("/admin/users")}
               >
                 Manage Users
               </Button>
@@ -61,7 +61,7 @@ export default function AdminDashboard() {
                 variant="contained"
                 color="primary"
                 sx={{ mt: 2 }}
-                onClick={() => navigate("/admin/schools")} // Add onClick handler to navigate
+                onClick={() => navigate("/admin/schools")}
               >
                 Manage Schools
               </Button>
@@ -69,9 +69,7 @@ export default function AdminDashboard() {
           </Card>
         </Grid>
       </Grid>
-      <Box marginTop={2} display="flex" justifyContent="flex-end">
-        <LogoutBtn />
-      </Box>
+      <UserInfo />
     </Box>
   );
 }
