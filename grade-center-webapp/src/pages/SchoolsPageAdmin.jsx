@@ -9,10 +9,12 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
+import { useNavigate } from "react-router-dom";
 
 export default function SchoolsPageAdmin() {
   const [open, setOpen] = useState(false);
   const [schoolData, setSchoolData] = useState({ name: "", address: "" });
+  const navigate = useNavigate(); // Initialize the navigate function
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -59,7 +61,12 @@ export default function SchoolsPageAdmin() {
           <Button variant="contained" color="primary" onClick={handleClickOpen}>
             Add School
           </Button>
-          <Button variant="contained" style={{ marginLeft: 8 }} color="success">
+          <Button
+            variant="contained"
+            style={{ marginLeft: 8 }}
+            color="success"
+            onClick={() => navigate("/admin/dashboard")} // Add onClick handler to navigate
+          >
             Back to Dashboard
           </Button>
         </Box>

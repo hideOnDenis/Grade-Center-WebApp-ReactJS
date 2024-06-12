@@ -10,6 +10,7 @@ import {
   ListItemText,
   Button,
 } from "@mui/material";
+import LogoutBtn from "../components/LogoutBtn"; // Adjust the import path as necessary
 
 export default function ParentDashboard() {
   const childPerformance = {
@@ -34,7 +35,7 @@ export default function ParentDashboard() {
   };
 
   return (
-    <Box padding={3}>
+    <Box padding={3} sx={{ position: "relative", minHeight: "100vh" }}>
       <Typography variant="h4" component="h1" gutterBottom>
         Parent Dashboard
       </Typography>
@@ -88,6 +89,9 @@ export default function ParentDashboard() {
           </Card>
         </Grid>
       </Grid>
+      <Box display="flex" justifyContent="flex-end" marginTop={2}>
+        <LogoutBtn />
+      </Box>
     </Box>
   );
 }

@@ -27,11 +27,38 @@ export default function UsersPage() {
     password: "",
     role: "",
   });
+  const [changeRoleOpen, setChangeRoleOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [newRole, setNewRole] = useState("");
 
   const columns = [
     { field: "id", headerName: "User ID", width: 100 },
     { field: "email", headerName: "Email", width: 200 },
     { field: "role", headerName: "Role", width: 130 },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 300,
+      renderCell: (params) => (
+        <Box>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => handleDelete(params.row.id)}
+            sx={{ marginRight: 1 }}
+          >
+            Delete User
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => handleOpenChangeRole(params.row)}
+          >
+            Change Role
+          </Button>
+        </Box>
+      ),
+    },
   ];
 
   const rows = [
@@ -60,6 +87,31 @@ export default function UsersPage() {
         // Optionally, show an error message
       });
     handleClose();
+  };
+
+  const handleOpenChangeRole = (user) => {
+    setSelectedUser(user);
+    setNewRole(user.role);
+    setChangeRoleOpen(true);
+  };
+
+  const handleChangeRoleClose = () => {
+    setChangeRoleOpen(false);
+  };
+
+  const handleChangeRoleSubmit = () => {
+    console.log("Changing role for user:", selectedUser.id, "to:", newRole);
+    // Implement role change logic here
+    setChangeRoleOpen(false);
+  };
+
+  const handleDelete = (userId) => {
+    console.log("Deleting user:", userId);
+    // Implement delete logic here
+  };
+
+  const handleRoleChange = (event) => {
+    setNewRole(event.target.value);
   };
 
   return (
@@ -121,14 +173,19 @@ export default function UsersPage() {
             value={userData.password}
             onChange={handleChange}
           />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleSubmit}>Submit</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={changeRoleOpen} onClose={handleChangeRoleClose}>
+        <DialogTitle>Change Role</DialogTitle>
+        <DialogContent>
           <FormControl fullWidth margin="dense">
             <InputLabel>Role</InputLabel>
-            <Select
-              name="role"
-              value={userData.role}
-              label="Role"
-              onChange={handleChange}
-            >
+            <Select value={newRole} label="Role" onChange={handleRoleChange}>
               <MenuItem value="admin">admin</MenuItem>
               <MenuItem value="director">director</MenuItem>
               <MenuItem value="teacher">teacher</MenuItem>
@@ -138,8 +195,8 @@ export default function UsersPage() {
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleSubmit}>Submit</Button>
+          <Button onClick={handleChangeRoleClose}>Cancel</Button>
+          <Button onClick={handleChangeRoleSubmit}>Submit</Button>
         </DialogActions>
       </Dialog>
     </Box>
