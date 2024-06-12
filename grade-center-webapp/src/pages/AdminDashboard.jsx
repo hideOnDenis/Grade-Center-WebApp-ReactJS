@@ -57,7 +57,12 @@ export default function AdminDashboard() {
               <Typography variant="h5" component="h2">
                 Schools
               </Typography>
-              <Button variant="contained" color="primary" sx={{ mt: 2 }}>
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{ mt: 2 }}
+                onClick={() => navigate("/admin/schools")} // Add onClick handler to navigate
+              >
                 Manage Schools
               </Button>
             </CardContent>

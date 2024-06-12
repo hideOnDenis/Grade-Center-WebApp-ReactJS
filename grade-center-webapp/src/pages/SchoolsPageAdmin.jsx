@@ -10,7 +10,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 
-export default function SchoolsPage() {
+export default function SchoolsPageAdmin() {
   const [open, setOpen] = useState(false);
   const [schoolData, setSchoolData] = useState({ name: "", address: "" });
 

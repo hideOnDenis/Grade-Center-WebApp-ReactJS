@@ -1,8 +1,18 @@
 import React from "react";
-import { Box, Card, CardContent, Typography, Grid } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  Grid,
+  Button,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import LogoutBtn from "../components/LogoutBtn";
 
 export default function DirectorDashboard() {
+  const navigate = useNavigate();
+
   const directorInfo = {
     totalTeachers: 75,
     totalStudents: 1500,
@@ -22,6 +32,14 @@ export default function DirectorDashboard() {
                 Total Teachers
               </Typography>
               <Typography variant="h6">{directorInfo.totalTeachers}</Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{ marginTop: 2 }}
+                onClick={() => navigate("/director/teachers")}
+              >
+                See All Teachers
+              </Button>
             </CardContent>
           </Card>
         </Grid>
@@ -32,6 +50,14 @@ export default function DirectorDashboard() {
                 Total Students
               </Typography>
               <Typography variant="h6">{directorInfo.totalStudents}</Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{ marginTop: 2 }}
+                onClick={() => navigate("/director/students")}
+              >
+                See All Students
+              </Button>
             </CardContent>
           </Card>
         </Grid>
