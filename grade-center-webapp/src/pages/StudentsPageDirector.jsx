@@ -10,14 +10,14 @@ import {
   TextField,
   MenuItem,
 } from "@mui/material";
-
 import { DataGrid } from "@mui/x-data-grid";
+import { useNavigate } from "react-router-dom";
 
-export default function StudentPage() {
+export default function StudentsPageDirector() {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [assignmentData, setAssignmentData] = useState({
     studentId: "",
-    school: "",
     grade: "",
   });
 
@@ -73,15 +73,25 @@ export default function StudentPage() {
         <Typography variant="h4" component="h1">
           Students
         </Typography>
-        <Button variant="contained" color="primary" onClick={handleClickOpen}>
-          Assign Student to School and Class
-        </Button>
+        <Box>
+          <Button variant="contained" color="primary" onClick={handleClickOpen}>
+            Assign Student to Grade/Class
+          </Button>
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => navigate("/director/dashboard")}
+            sx={{ marginLeft: 2 }}
+          >
+            Back to Dashboard
+          </Button>
+        </Box>
       </Box>
 
       <DataGrid rows={rows} columns={columns} pageSize={5} />
 
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Assign to School and Class</DialogTitle>
+        <DialogTitle>Assign to Grade/Class</DialogTitle>
         <DialogContent>
           <TextField
             select
@@ -98,17 +108,6 @@ export default function StudentPage() {
                 {student.name}
               </MenuItem>
             ))}
-          </TextField>
-          <TextField
-            select
-            margin="dense"
-            name="school"
-            label="School"
-            fullWidth
-            value={assignmentData.school}
-            onChange={handleChange}
-          >
-            {/* School selection options */}
           </TextField>
           <TextField
             select

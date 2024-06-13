@@ -58,7 +58,7 @@ export default function TeacherDashboard() {
           <Card>
             <CardContent>
               <Typography variant="h5" component="h2">
-                Manage Grades and Attendance
+                Manage Students
               </Typography>
               <Typography>
                 Quickly access tools to manage student grades and attendance.

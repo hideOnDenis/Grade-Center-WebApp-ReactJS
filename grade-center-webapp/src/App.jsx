@@ -6,7 +6,7 @@ import UsersPage from "./pages/UsersPage";
 import SchoolsPageAdmin from "./pages/SchoolsPageAdmin.jsx";
 import StudentDashboard from "./pages/StudentDashboard";
 import SchedulePageStudent from "./pages/SchedulePageStudent.jsx";
-import StudentPage from "./pages/StudentsPageDirector.jsx";
+import StudentsPageDirector from "./pages/StudentsPageDirector.jsx";
 import ParentDashboard from "./pages/ParentDashboard";
 import TeacherDashboard from "./pages/TeacherDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -42,7 +42,7 @@ function App() {
         <Route element={<ProtectedRoute allowedRoles={["director"]} />}>
           <Route path="/director/dashboard" element={<DirectorDashboard />} />
           <Route path="/director/teachers" element={<TeachersPage />} />
-          <Route path="/director/students" element={<StudentPage />} />
+          <Route path="/director/students" element={<StudentsPageDirector />} />
         </Route>
         <Route element={<ProtectedRoute allowedRoles={["teacher"]} />}>
           <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
