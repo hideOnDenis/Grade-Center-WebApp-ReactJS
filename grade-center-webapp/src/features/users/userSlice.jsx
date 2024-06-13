@@ -30,7 +30,7 @@ export const changeUserRole = createAsyncThunk(
   "users/changeUserRole",
   async ({ username, role }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${domain}/assign-role`, {
+      const response = await axios.patch(`${domain}/switch-role-username`, {
         username,
         role,
       });
@@ -50,7 +50,9 @@ export const deleteUser = createAsyncThunk(
   "users/deleteUser",
   async (username, { rejectWithValue }) => {
     try {
-      const response = await axios.delete(`${domain}/users/${username}`);
+      const response = await axios.delete(
+        `${domain}/delete-user/username=${username}`
+      );
       return { username };
     } catch (error) {
       const message =

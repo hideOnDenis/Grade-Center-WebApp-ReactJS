@@ -78,7 +78,7 @@ export default function AdminDashboard() {
           </Card>
         </Grid>
       </Grid>
-      {/* <UserInfo /> */}
+      <UserInfo />
     </Box>
   );
 }

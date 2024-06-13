@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -15,12 +15,18 @@ import {
 } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../features/auth/authSlice";
+import {
+  fetchUsers,
+  changeUserRole,
+  deleteUser,
+} from "../features/users/userSlice";
 
 export default function UsersPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { users, status } = useSelector((state) => state.user);
   const [open, setOpen] = useState(false);
   const [userData, setUserData] = useState({
     username: "",
@@ -30,6 +36,10 @@ export default function UsersPage() {
   const [changeRoleOpen, setChangeRoleOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [newRole, setNewRole] = useState("");
+
+  useEffect(() => {
+    dispatch(fetchUsers());
+  }, [dispatch]);
 
   const columns = [
     { field: "username", headerName: "Username", width: 200 },
@@ -43,7 +53,7 @@ export default function UsersPage() {
           <Button
             variant="contained"
             color="secondary"
-            onClick={() => handleDelete(params.row.id)}
+            onClick={() => handleDelete(params.row.username)}
             sx={{ marginRight: 1 }}
           >
             Delete User
@@ -60,11 +70,6 @@ export default function UsersPage() {
     },
   ];
 
-  const rows = [
-    { id: 1, username: "user1", role: "Admin" },
-    { id: 2, username: "user2", role: "User" },
-  ];
-
   const handleChange = (event) => {
     const { name, value } = event.target;
     setUserData({ ...userData, [name]: value });
@@ -79,11 +84,10 @@ export default function UsersPage() {
       .unwrap()
       .then((response) => {
         console.log("User registered successfully", response);
-        // Optionally, refresh the user list or show a success message
+        dispatch(fetchUsers()); // Refresh the user list
       })
       .catch((error) => {
         console.error("Failed to register user", error);
-        // Optionally, show an error message
       });
     handleClose();
   };
@@ -99,14 +103,32 @@ export default function UsersPage() {
   };
 
   const handleChangeRoleSubmit = () => {
-    console.log("Changing role for user:", selectedUser.id, "to:", newRole);
-    // Implement role change logic here
+    if (selectedUser) {
+      dispatch(
+        changeUserRole({ username: selectedUser.username, role: newRole })
+      )
+        .unwrap()
+        .then(() => {
+          console.log("Role changed successfully");
+          dispatch(fetchUsers()); // Refresh the user list
+        })
+        .catch((error) => {
+          console.error("Failed to change role", error);
+        });
+    }
     setChangeRoleOpen(false);
   };
 
-  const handleDelete = (userId) => {
-    console.log("Deleting user:", userId);
-    // Implement delete logic here
+  const handleDelete = (username) => {
+    dispatch(deleteUser(username))
+      .unwrap()
+      .then(() => {
+        console.log("User deleted successfully");
+        dispatch(fetchUsers()); // Refresh the user list
+      })
+      .catch((error) => {
+        console.error("Failed to delete user", error);
+      });
   };
 
   const handleRoleChange = (event) => {
@@ -141,11 +163,16 @@ export default function UsersPage() {
         </Box>
       </Box>
       <DataGrid
-        rows={rows}
+        rows={users.map((user, index) => ({
+          id: index,
+          username: user.username,
+          role: user.role,
+        }))}
         columns={columns}
         pageSize={5}
         components={{ Toolbar: GridToolbar }}
         disableSelectionOnClick
+        loading={status === "loading"}
       />
 
       <Dialog open={open} onClose={handleClose}>
@@ -172,6 +199,21 @@ export default function UsersPage() {
             value={userData.password}
             onChange={handleChange}
           />
+          <FormControl fullWidth margin="dense">
+            <InputLabel>Role</InputLabel>
+            <Select
+              name="role"
+              value={userData.role}
+              label="Role"
+              onChange={handleChange}
+            >
+              <MenuItem value="admin">admin</MenuItem>
+              <MenuItem value="director">director</MenuItem>
+              <MenuItem value="teacher">teacher</MenuItem>
+              <MenuItem value="parent">parent</MenuItem>
+              <MenuItem value="student">student</MenuItem>
+            </Select>
+          </FormControl>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
