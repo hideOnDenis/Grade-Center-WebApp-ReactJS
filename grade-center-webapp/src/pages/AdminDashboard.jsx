@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Card,
@@ -8,15 +8,18 @@ import {
   Button,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUsers } from "../features/users/userSlice";
 import UserInfo from "../components/UserInfo";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { users, status } = useSelector((state) => state.user);
 
-  // Mock data for demonstration
-  const systemStats = {
-    totalUsers: 1024,
-  };
+  useEffect(() => {
+    dispatch(fetchUsers());
+  }, [dispatch]);
 
   return (
     <Box padding={3} sx={{ position: "relative", minHeight: "100vh" }}>
@@ -30,7 +33,13 @@ export default function AdminDashboard() {
               <Typography variant="h5" component="h2">
                 Total Users
               </Typography>
-              <Typography variant="h6">{systemStats.totalUsers}</Typography>
+              {status === "loading" ? (
+                <Typography variant="h6">Loading...</Typography>
+              ) : (
+                <Typography variant="h6">
+                  {Object.keys(users).length}
+                </Typography>
+              )}
             </CardContent>
           </Card>
         </Grid>
@@ -69,7 +78,7 @@ export default function AdminDashboard() {
           </Card>
         </Grid>
       </Grid>
-      <UserInfo />
+      {/* <UserInfo /> */}
     </Box>
   );
 }

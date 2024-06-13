@@ -32,8 +32,7 @@ export default function UsersPage() {
   const [newRole, setNewRole] = useState("");
 
   const columns = [
-    { field: "id", headerName: "User ID", width: 100 },
-    { field: "email", headerName: "Email", width: 200 },
+    { field: "username", headerName: "Username", width: 200 },
     { field: "role", headerName: "Role", width: 130 },
     {
       field: "actions",
@@ -62,8 +61,8 @@ export default function UsersPage() {
   ];
 
   const rows = [
-    { id: 1, email: "user@example.com", role: "Admin" },
-    { id: 2, email: "anotheruser@example.com", role: "User" },
+    { id: 1, username: "user1", role: "Admin" },
+    { id: 2, username: "user2", role: "User" },
   ];
 
   const handleChange = (event) => {
