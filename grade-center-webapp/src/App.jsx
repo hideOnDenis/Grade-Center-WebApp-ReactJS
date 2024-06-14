@@ -18,6 +18,7 @@ import { useEffect } from "react";
 import SchedulePageParent from "./pages/SchedulePageParent.jsx";
 import TeachersPage from "./pages/TeachersPageDirector.jsx";
 import AbsencePageStudent from "./pages/AbsencePageStudent.jsx";
+import StudentsPageTeacher from "./pages/StudentsPageTeacher.jsx";
 
 function App() {
   const dispatch = useDispatch();
@@ -47,6 +48,7 @@ function App() {
         </Route>
         <Route element={<ProtectedRoute allowedRoles={["teacher"]} />}>
           <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
+          <Route path="/teacher/students" element={<StudentsPageTeacher />} />
         </Route>
         <Route element={<ProtectedRoute allowedRoles={["parent"]} />}>
           <Route path="/parent/dashboard" element={<ParentDashboard />} />

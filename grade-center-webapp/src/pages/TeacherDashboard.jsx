@@ -7,9 +7,12 @@ import {
   Grid,
   Button,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import UserInfo from "../components/UserInfo"; // Adjust the import path as necessary
 
 export default function TeacherDashboard() {
+  const navigate = useNavigate(); // Initialize the navigate function
+
   // Mock data for demonstration
   const todayClasses = [
     { time: "09:00 AM", subject: "Mathematics", room: "101" },
@@ -17,8 +20,7 @@ export default function TeacherDashboard() {
   ];
 
   const handleManageGrades = () => {
-    console.log("Manage grades clicked");
-    // Navigation to grades management page
+    navigate("/teacher/students"); // Navigation to the students management page
   };
 
   const handleViewSchedule = () => {
@@ -69,7 +71,7 @@ export default function TeacherDashboard() {
                 onClick={handleManageGrades}
                 sx={{ mt: 2 }}
               >
-                Manage Grades
+                Manage Students
               </Button>
             </CardContent>
           </Card>
