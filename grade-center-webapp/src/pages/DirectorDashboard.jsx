@@ -63,7 +63,7 @@ export default function DirectorDashboard() {
           </Card>
         </Grid>
       </Grid>
-      {/* <UserInfo /> */}
+      <UserInfo />
     </Box>
   );
 }

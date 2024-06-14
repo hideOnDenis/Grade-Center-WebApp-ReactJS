@@ -17,6 +17,7 @@ import { loadUser } from "./features/auth/authSlice";
 import { useEffect } from "react";
 import SchedulePageParent from "./pages/SchedulePageParent.jsx";
 import TeachersPage from "./pages/TeachersPageDirector.jsx";
+import AbsencePageStudent from "./pages/AbsencePageStudent.jsx";
 
 function App() {
   const dispatch = useDispatch();
@@ -54,6 +55,7 @@ function App() {
         <Route element={<ProtectedRoute allowedRoles={["student"]} />}>
           <Route path="/student/dashboard" element={<StudentDashboard />} />
           <Route path="/student/schedule" element={<SchedulePageStudent />} />
+          <Route path="/student/absences" element={<AbsencePageStudent />} />
         </Route>
       </Routes>
     </Router>

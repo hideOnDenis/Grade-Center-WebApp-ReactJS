@@ -27,6 +27,9 @@ export default function StudentDashboard() {
       total: 3,
       pending: 2,
     },
+    absences: {
+      total: 5,
+    },
   };
 
   return (
@@ -35,7 +38,7 @@ export default function StudentDashboard() {
         Student Dashboard
       </Typography>
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={4}>
+        <Grid item xs={12} sm={3}>
           <Card>
             <CardContent>
               <Typography variant="h5" component="h2">
@@ -48,7 +51,7 @@ export default function StudentDashboard() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={4}>
+        <Grid item xs={12} sm={3}>
           <Card>
             <CardContent>
               <Typography variant="h5" component="h2">
@@ -61,7 +64,7 @@ export default function StudentDashboard() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={4}>
+        <Grid item xs={12} sm={3}>
           <Card>
             <CardContent>
               <Typography variant="h5" component="h2">
@@ -73,6 +76,24 @@ export default function StudentDashboard() {
               <Typography color="text.secondary">
                 Total: {studentInfo.assignments.total}
               </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={3}>
+          <Card>
+            <CardContent>
+              <Typography variant="h5" component="h2">
+                Absences
+              </Typography>
+              <Typography variant="h6">{studentInfo.absences.total}</Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => navigate("/student/absences")} // Ensure this matches the correct route
+                sx={{ mt: 2 }}
+              >
+                View All Absences
+              </Button>
             </CardContent>
           </Card>
         </Grid>

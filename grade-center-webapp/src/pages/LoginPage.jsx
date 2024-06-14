@@ -117,7 +117,7 @@ export default function LoginPage() {
             </Button>
             <Grid container>
               <Grid item>
-                <Link href="/signup" variant="body2">
+                <Link href="/login" variant="body2">
                   {" "}
                   {"Don't have an account? Sign Up"}
                 </Link>
@@ -125,7 +125,7 @@ export default function LoginPage() {
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
+        <Copyright sx={{ mt: 2, mb: 4 }} />
       </Container>
     </ThemeProvider>
   );
