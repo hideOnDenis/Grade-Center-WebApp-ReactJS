@@ -26,6 +26,26 @@ export const fetchAbsencesByStudent = createAsyncThunk(
   }
 );
 
+export const fetchAllAbsences = createAsyncThunk(
+  "absences/fetchAllAbsences",
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) throw new Error("No token found");
+      const response = await axios.get(`${domain}/absences`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data;
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to fetch absences";
+      return rejectWithValue(message);
+    }
+  }
+);
+
 const absenceSlice = createSlice({
   name: "absences",
   initialState: {
@@ -44,6 +64,17 @@ const absenceSlice = createSlice({
         state.absences = action.payload;
       })
       .addCase(fetchAbsencesByStudent.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(fetchAllAbsences.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchAllAbsences.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.absences = action.payload;
+      })
+      .addCase(fetchAllAbsences.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });

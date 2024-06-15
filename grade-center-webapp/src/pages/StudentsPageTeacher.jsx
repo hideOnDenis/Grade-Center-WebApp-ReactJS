@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -11,9 +11,19 @@ import {
 } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchStudents } from "../features/students/studentSlice";
+import { fetchAllAbsences } from "../features/absences/absenceSlice";
 
 export default function StudentsPageTeacher() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { students, status: studentStatus } = useSelector(
+    (state) => state.students
+  );
+  const { absences, status: absenceStatus } = useSelector(
+    (state) => state.absence
+  ); // Corrected here
   const [openGrade, setOpenGrade] = useState(false);
   const [openAbsence, setOpenAbsence] = useState(false);
   const [gradeData, setGradeData] = useState({
@@ -26,47 +36,31 @@ export default function StudentsPageTeacher() {
     reason: "",
   });
 
-  // Static students data
-  const students = [
-    {
-      id: 1,
-      name: "John Doe",
-      grades: [5, 4, 3],
-      absences: [{ date: "2024-06-15", reason: "Sick" }],
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      grades: [6, 5, 5],
-      absences: [{ date: "2024-06-14", reason: "Family event" }],
-    },
-    {
-      id: 3,
-      name: "Alice Johnson",
-      grades: [4, 4, 5],
-      absences: [{ date: "2024-06-13", reason: "Personal" }],
-    },
-    // Add more students as needed
-  ];
+  useEffect(() => {
+    dispatch(fetchStudents());
+    dispatch(fetchAllAbsences());
+  }, [dispatch]);
+
+  const countStudentAbsences = (studentId) => {
+    return absences.filter((absence) => absence.studentId === studentId).length;
+  };
 
   const columns = [
-    { field: "name", headerName: "Name", width: 200 },
+    { field: "username", headerName: "Name", width: 200 },
     {
       field: "grades",
       headerName: "Grades",
       width: 300,
-      renderCell: (params) => params.value.join(", "),
+      renderCell: (params) =>
+        Array.isArray(params.value)
+          ? params.value.map((grade) => grade.grade).join(", ")
+          : "",
     },
     {
       field: "absences",
       headerName: "Absences",
-      width: 300,
-      renderCell: (params) =>
-        params.value.map((absence, index) => (
-          <div key={index}>
-            {absence.date} - {absence.reason}
-          </div>
-        )),
+      width: 100,
+      renderCell: (params) => countStudentAbsences(params.row.id),
     },
     {
       field: "actions",
@@ -178,16 +172,17 @@ export default function StudentsPageTeacher() {
         </Button>
       </Box>
       <DataGrid
-        rows={students.map((student, index) => ({
-          id: index,
-          name: student.name,
+        rows={students.map((student) => ({
+          id: student.id,
+          username: student.username,
           grades: student.grades,
-          absences: student.absences,
+          absences: countStudentAbsences(student.id),
         }))}
         columns={columns}
         pageSize={5}
         components={{ Toolbar: GridToolbar }}
         disableSelectionOnClick
+        loading={studentStatus === "loading" || absenceStatus === "loading"}
       />
 
       <Dialog open={openGrade} onClose={handleCloseGrade}>
