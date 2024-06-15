@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Card,
@@ -9,12 +9,16 @@ import {
 } from "@mui/material";
 import UserInfo from "../components/UserInfo"; // Adjust the import path as necessary
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAbsencesByStudent } from "../features/absences/absenceSlice"; // Adjust the import path as necessary
 
 export default function StudentDashboard() {
   const navigate = useNavigate();
-
-  // Mock data for demonstration
-  const studentInfo = {
+  const dispatch = useDispatch();
+  const { absences, status } = useSelector(
+    (state) => state.absences || { absences: [], status: "idle" }
+  );
+  const [studentInfo, setStudentInfo] = useState({
     grades: {
       recent: "A",
       average: "B+",
@@ -28,9 +32,23 @@ export default function StudentDashboard() {
       pending: 2,
     },
     absences: {
-      total: 5,
+      total: 0,
     },
-  };
+  });
+
+  useEffect(() => {
+    dispatch(fetchAbsencesByStudent())
+      .unwrap()
+      .then((fetchedAbsences) => {
+        setStudentInfo((prevInfo) => ({
+          ...prevInfo,
+          absences: { total: fetchedAbsences.length },
+        }));
+      })
+      .catch((error) => {
+        console.error("Failed to fetch absences", error);
+      });
+  }, [dispatch]);
 
   return (
     <Box padding={3} sx={{ position: "relative", minHeight: "100vh" }}>

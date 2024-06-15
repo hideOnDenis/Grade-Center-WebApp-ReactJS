@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -11,6 +11,9 @@ import {
 } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
+const domain = "http://localhost:8082";
 
 export default function AbsencePageStudent() {
   const navigate = useNavigate();
@@ -19,17 +22,30 @@ export default function AbsencePageStudent() {
     date: "",
     course: "",
   });
+  const [absences, setAbsences] = useState([]);
 
-  // Static absences data
-  const absences = [
-    { date: "2024-01-10", course: "Mathematics" },
-    { date: "2024-02-15", course: "Physics" },
-    { date: "2024-03-20", course: "History" },
-  ];
+  // Fetch absences from the API
+  useEffect(() => {
+    const fetchAbsences = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        const response = await axios.get(`${domain}/absences/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setAbsences(response.data);
+      } catch (error) {
+        console.error("Failed to fetch absences", error);
+      }
+    };
+
+    fetchAbsences();
+  }, []);
 
   const columns = [
     { field: "date", headerName: "Date", width: 200 },
-    { field: "course", headerName: "Course", width: 300 },
+    { field: "courseName", headerName: "Course", width: 300 },
   ];
 
   const handleOpen = () => setOpen(true);
@@ -71,7 +87,7 @@ export default function AbsencePageStudent() {
         rows={absences.map((absence, index) => ({
           id: index,
           date: absence.date,
-          course: absence.course,
+          courseName: absence.courseName,
         }))}
         columns={columns}
         pageSize={5}

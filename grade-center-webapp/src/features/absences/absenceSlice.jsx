@@ -2,14 +2,19 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const domain = "http://localhost:8082/api/v1/auth";
+const domain = "http://localhost:8082";
 
-// Async thunk to fetch absences
-export const fetchAbsences = createAsyncThunk(
-  "absences/fetchAbsences",
+// Async thunk to fetch absences by student
+export const fetchAbsencesByStudent = createAsyncThunk(
+  "absences/fetchAbsencesByStudent",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${domain}/absences`);
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.get(`${domain}/absences/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       return response.data;
     } catch (error) {
       const message =
@@ -31,14 +36,14 @@ const absenceSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchAbsences.pending, (state) => {
+      .addCase(fetchAbsencesByStudent.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(fetchAbsences.fulfilled, (state, action) => {
+      .addCase(fetchAbsencesByStudent.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.absences = action.payload;
       })
-      .addCase(fetchAbsences.rejected, (state, action) => {
+      .addCase(fetchAbsencesByStudent.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });
