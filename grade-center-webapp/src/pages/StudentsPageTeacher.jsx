@@ -8,10 +8,6 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
-  MenuItem,
-  Select,
-  InputLabel,
-  FormControl,
 } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
@@ -22,39 +18,60 @@ export default function StudentsPageTeacher() {
   const [openAbsence, setOpenAbsence] = useState(false);
   const [gradeData, setGradeData] = useState({
     studentId: "",
-    courseId: "",
     grade: "",
   });
   const [absenceData, setAbsenceData] = useState({
     studentId: "",
-    courseId: "",
     date: "",
     reason: "",
   });
 
   // Static students data
   const students = [
-    { id: 1, name: "John Doe", course: "Mathematics", grade: "A", absences: 2 },
-    { id: 2, name: "Jane Smith", course: "Physics", grade: "B+", absences: 1 },
+    {
+      id: 1,
+      name: "John Doe",
+      grades: [5, 4, 3],
+      absences: [{ date: "2024-06-15", reason: "Sick" }],
+    },
+    {
+      id: 2,
+      name: "Jane Smith",
+      grades: [6, 5, 5],
+      absences: [{ date: "2024-06-14", reason: "Family event" }],
+    },
     {
       id: 3,
       name: "Alice Johnson",
-      course: "Chemistry",
-      grade: "A-",
-      absences: 0,
+      grades: [4, 4, 5],
+      absences: [{ date: "2024-06-13", reason: "Personal" }],
     },
     // Add more students as needed
   ];
 
   const columns = [
     { field: "name", headerName: "Name", width: 200 },
-    { field: "course", headerName: "Course", width: 200 },
-    { field: "grade", headerName: "Grade", width: 100 },
-    { field: "absences", headerName: "Absences", width: 100 },
+    {
+      field: "grades",
+      headerName: "Grades",
+      width: 300,
+      renderCell: (params) => params.value.join(", "),
+    },
+    {
+      field: "absences",
+      headerName: "Absences",
+      width: 300,
+      renderCell: (params) =>
+        params.value.map((absence, index) => (
+          <div key={index}>
+            {absence.date} - {absence.reason}
+          </div>
+        )),
+    },
     {
       field: "actions",
       headerName: "Actions",
-      width: 300,
+      width: 600,
       renderCell: (params) => (
         <Box>
           <Button
@@ -63,14 +80,30 @@ export default function StudentsPageTeacher() {
             onClick={() => handleOpenGrade(params.row)}
             sx={{ marginRight: 1 }}
           >
-            Edit Grade
+            Add Grade
           </Button>
           <Button
             variant="contained"
             color="secondary"
             onClick={() => handleOpenAbsence(params.row)}
+            sx={{ marginRight: 1 }}
           >
             Add Absence
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => handleDeleteGrade(params.row)}
+          >
+            Delete Grade
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => handleDeleteAbsence(params.row)}
+            sx={{ marginLeft: 1 }}
+          >
+            Delete Absence
           </Button>
         </Box>
       ),
@@ -113,6 +146,16 @@ export default function StudentsPageTeacher() {
     handleCloseAbsence();
   };
 
+  const handleDeleteGrade = (student) => {
+    console.log("Deleting grade for student:", student.id); // Debugging log
+    // Implement the delete logic here
+  };
+
+  const handleDeleteAbsence = (student) => {
+    console.log("Deleting absence for student:", student.id); // Debugging log
+    // Implement the delete logic here
+  };
+
   return (
     <Box sx={{ height: "calc(100vh - 64px - 16px - 16px)", width: "100%" }}>
       <Box
@@ -138,8 +181,7 @@ export default function StudentsPageTeacher() {
         rows={students.map((student, index) => ({
           id: index,
           name: student.name,
-          course: student.course,
-          grade: student.grade,
+          grades: student.grades,
           absences: student.absences,
         }))}
         columns={columns}
@@ -149,28 +191,19 @@ export default function StudentsPageTeacher() {
       />
 
       <Dialog open={openGrade} onClose={handleCloseGrade}>
-        <DialogTitle>Edit Grade</DialogTitle>
+        <DialogTitle>Add Grade</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
             margin="dense"
-            name="courseId"
-            label="Course ID"
-            type="text"
-            fullWidth
-            variant="standard"
-            value={gradeData.courseId}
-            onChange={handleGradeChange}
-          />
-          <TextField
-            margin="dense"
             name="grade"
             label="Grade"
-            type="text"
+            type="number"
             fullWidth
             variant="standard"
             value={gradeData.grade}
             onChange={handleGradeChange}
+            inputProps={{ min: 2, max: 6 }}
           />
         </DialogContent>
         <DialogActions>
@@ -184,16 +217,6 @@ export default function StudentsPageTeacher() {
         <DialogContent>
           <TextField
             autoFocus
-            margin="dense"
-            name="courseId"
-            label="Course ID"
-            type="text"
-            fullWidth
-            variant="standard"
-            value={absenceData.courseId}
-            onChange={handleAbsenceChange}
-          />
-          <TextField
             margin="dense"
             name="date"
             label="Date"
