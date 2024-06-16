@@ -13,7 +13,10 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchStudents } from "../features/students/studentSlice";
-import { fetchAllAbsences } from "../features/absences/absenceSlice";
+import {
+  fetchAllAbsences,
+  deleteAbsence,
+} from "../features/absences/absenceSlice";
 
 export default function StudentsPageTeacher() {
   const navigate = useNavigate();
@@ -43,6 +46,10 @@ export default function StudentsPageTeacher() {
 
   const countStudentAbsences = (studentId) => {
     return absences.filter((absence) => absence.studentId === studentId).length;
+  };
+
+  const handleDeleteAbsence = (absenceId) => {
+    dispatch(deleteAbsence(absenceId));
   };
 
   const columns = [
@@ -94,7 +101,7 @@ export default function StudentsPageTeacher() {
           <Button
             variant="contained"
             color="error"
-            onClick={() => handleDeleteAbsence(params.row)}
+            onClick={() => handleDeleteAbsence(params.row.id)} // Adjusted to pass absence ID
             sx={{ marginLeft: 1 }}
           >
             Delete Absence
@@ -142,11 +149,6 @@ export default function StudentsPageTeacher() {
 
   const handleDeleteGrade = (student) => {
     console.log("Deleting grade for student:", student.id); // Debugging log
-    // Implement the delete logic here
-  };
-
-  const handleDeleteAbsence = (student) => {
-    console.log("Deleting absence for student:", student.id); // Debugging log
     // Implement the delete logic here
   };
 

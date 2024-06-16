@@ -46,6 +46,25 @@ export const fetchAllAbsences = createAsyncThunk(
   }
 );
 
+export const deleteAbsence = createAsyncThunk(
+  "absences/deleteAbsence",
+  async (id, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.delete(`${domain}/absences/id=${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return id;
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to delete absence";
+      return rejectWithValue(message);
+    }
+  }
+);
+
 const absenceSlice = createSlice({
   name: "absences",
   initialState: {
@@ -75,6 +94,19 @@ const absenceSlice = createSlice({
         state.absences = action.payload;
       })
       .addCase(fetchAllAbsences.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(deleteAbsence.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(deleteAbsence.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.absences = state.absences.filter(
+          (absence) => absence.id !== action.payload
+        );
+      })
+      .addCase(deleteAbsence.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });
