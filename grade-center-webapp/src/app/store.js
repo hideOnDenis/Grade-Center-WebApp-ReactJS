@@ -5,6 +5,7 @@ import teacherReducer from "../features/teachers/teacherSlice.jsx";
 import absenceReducer from "../features/absences/absenceSlice.jsx";
 import studentReducer from "../features/students/studentSlice.jsx";
 import gradeReducer from "../features/grades/gradeSlice.jsx";
+import scheduleReducer from "../features/schedule/scheduleSlice.jsx";
 
 export const store = configureStore({
     reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
         absence: absenceReducer,
         students: studentReducer,
         grades: gradeReducer,
+        schedule: scheduleReducer,
     },
 
 });
