@@ -19,6 +19,7 @@ import SchedulePageParent from "./pages/SchedulePageParent.jsx";
 import TeachersPage from "./pages/TeachersPageDirector.jsx";
 import AbsencePageStudent from "./pages/AbsencePageStudent.jsx";
 import StudentsPageTeacher from "./pages/StudentsPageTeacher.jsx";
+import GradesPageStudent from "./pages/GradesPageStudent.jsx";
 
 function App() {
   const dispatch = useDispatch();
@@ -58,6 +59,7 @@ function App() {
           <Route path="/student/dashboard" element={<StudentDashboard />} />
           <Route path="/student/schedule" element={<SchedulePageStudent />} />
           <Route path="/student/absences" element={<AbsencePageStudent />} />
+          <Route path="/student/grades" element={<GradesPageStudent />} />
         </Route>
       </Routes>
     </Router>

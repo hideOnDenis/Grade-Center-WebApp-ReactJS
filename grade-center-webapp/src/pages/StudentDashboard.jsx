@@ -21,15 +21,10 @@ export default function StudentDashboard() {
   const [studentInfo, setStudentInfo] = useState({
     grades: {
       recent: "A",
-      average: "B+",
     },
     nextClass: {
-      name: "Mathematics",
-      time: "10:00 AM - 11:00 AM",
-    },
-    assignments: {
-      total: 3,
-      pending: 2,
+      name: "",
+      time: "",
     },
     absences: {
       total: 0,
@@ -56,20 +51,25 @@ export default function StudentDashboard() {
         Student Dashboard
       </Typography>
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={3}>
+        <Grid item xs={12} sm={4}>
           <Card>
             <CardContent>
               <Typography variant="h5" component="h2">
                 Recent Grade
               </Typography>
               <Typography variant="h6">{studentInfo.grades.recent}</Typography>
-              <Typography color="text.secondary">
-                Average Grade: {studentInfo.grades.average}
-              </Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{ mt: 2 }}
+                onClick={() => navigate("/student/grades")} // Ensure this matches the correct route
+              >
+                View All Grades
+              </Button>
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={3}>
+        <Grid item xs={12} sm={4}>
           <Card>
             <CardContent>
               <Typography variant="h5" component="h2">
@@ -77,27 +77,20 @@ export default function StudentDashboard() {
               </Typography>
               <Typography variant="h6">{studentInfo.nextClass.name}</Typography>
               <Typography color="text.secondary">
-                Time: {studentInfo.nextClass.time}
+                {studentInfo.nextClass.time}
               </Typography>
+              <Button
+                variant="contained"
+                color="secondary"
+                sx={{ mt: 2 }}
+                onClick={() => navigate("/student/schedule")} // Ensure this matches the correct route
+              >
+                View Full Schedule
+              </Button>
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={3}>
-          <Card>
-            <CardContent>
-              <Typography variant="h5" component="h2">
-                Assignments
-              </Typography>
-              <Typography variant="h6">
-                Pending: {studentInfo.assignments.pending}
-              </Typography>
-              <Typography color="text.secondary">
-                Total: {studentInfo.assignments.total}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={3}>
+        <Grid item xs={12} sm={4}>
           <Card>
             <CardContent>
               <Typography variant="h5" component="h2">
@@ -117,19 +110,6 @@ export default function StudentDashboard() {
         </Grid>
       </Grid>
       <Box marginTop={2} display="flex" justifyContent="space-between">
-        <Box>
-          <Button variant="contained" color="primary">
-            View All Grades
-          </Button>
-          <Button
-            variant="contained"
-            color="secondary"
-            style={{ marginLeft: "10px" }}
-            onClick={() => navigate("/student/schedule")} // Ensure this matches the correct route
-          >
-            View Full Schedule
-          </Button>
-        </Box>
         <UserInfo />
       </Box>
     </Box>
