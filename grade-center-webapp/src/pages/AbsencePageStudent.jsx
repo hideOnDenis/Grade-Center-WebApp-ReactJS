@@ -34,9 +34,15 @@ export default function AbsencePageStudent() {
             Authorization: `Bearer ${token}`,
           },
         });
-        setAbsences(response.data);
+
+        if (response.status === 204) {
+          setAbsences([]);
+        } else {
+          setAbsences(response.data);
+        }
       } catch (error) {
         console.error("Failed to fetch absences", error);
+        setAbsences([]); // Set empty array on error
       }
     };
 
@@ -84,11 +90,15 @@ export default function AbsencePageStudent() {
         </Button>
       </Box>
       <DataGrid
-        rows={absences.map((absence, index) => ({
-          id: index,
-          date: absence.date,
-          courseName: absence.courseName,
-        }))}
+        rows={
+          absences.length
+            ? absences.map((absence, index) => ({
+                id: index,
+                date: absence.date,
+                courseName: absence.courseName,
+              }))
+            : []
+        }
         columns={columns}
         pageSize={5}
         components={{ Toolbar: GridToolbar }}

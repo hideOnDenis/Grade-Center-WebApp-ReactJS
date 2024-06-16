@@ -26,7 +26,7 @@ export default function StudentsPageTeacher() {
   );
   const { absences, status: absenceStatus } = useSelector(
     (state) => state.absence
-  ); // Corrected here
+  );
   const [openGrade, setOpenGrade] = useState(false);
   const [openAbsence, setOpenAbsence] = useState(false);
   const [gradeData, setGradeData] = useState({
@@ -45,11 +45,19 @@ export default function StudentsPageTeacher() {
   }, [dispatch]);
 
   const countStudentAbsences = (studentId) => {
+    if (!absences) return 0;
     return absences.filter((absence) => absence.studentId === studentId).length;
   };
 
   const handleDeleteAbsence = (absenceId) => {
-    dispatch(deleteAbsence(absenceId));
+    dispatch(deleteAbsence(absenceId))
+      .unwrap()
+      .then(() => {
+        dispatch(fetchAllAbsences()); // Refresh absences after deletion
+      })
+      .catch((error) => {
+        console.error("Failed to delete absence", error);
+      });
   };
 
   const columns = [
@@ -101,7 +109,7 @@ export default function StudentsPageTeacher() {
           <Button
             variant="contained"
             color="error"
-            onClick={() => handleDeleteAbsence(params.row.id)} // Adjusted to pass absence ID
+            onClick={() => handleDeleteAbsence(params.row.id)}
             sx={{ marginLeft: 1 }}
           >
             Delete Absence
