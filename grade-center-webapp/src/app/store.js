@@ -12,7 +12,7 @@ export const store = configureStore({
     reducer: {
         auth: authReducer,
         user: userReducer,
-        teacher: teacherReducer,
+        teachers: teacherReducer,
         absence: absenceReducer,
         students: studentReducer,
         grades: gradeReducer,

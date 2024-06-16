@@ -7,7 +7,7 @@ const domain = "http://localhost:8082/students";
 // Async thunk to fetch students with full details
 export const fetchStudents = createAsyncThunk(
   "students/fetchStudents",
-  async (_, { getState, rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("accessToken");
       if (!token) throw new Error("No token found");

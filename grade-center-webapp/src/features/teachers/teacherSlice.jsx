@@ -8,14 +8,17 @@ export const fetchTeachers = createAsyncThunk(
   "teachers/fetchTeachers",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${domain}`);
-      // Transform the response to an array of teachers
-      const teachers = response.data.map((teacher) => ({
-        id: teacher.id,
-        name: teacher.name,
-        subject: teacher.subject,
+      const token = localStorage.getItem("accessToken");
+      if (!token) throw new Error("No token found");
+      const response = await axios.get(`${domain}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data.map((teacher) => ({
+        id: teacher.userID,
+        schoolName: teacher.schoolName,
+        courses: teacher.courses,
+        qualifications: teacher.qualifications,
       }));
-      return teachers;
     } catch (error) {
       const message =
         error.response?.data?.message ||
@@ -76,6 +79,8 @@ export const deleteTeacher = createAsyncThunk(
     }
   }
 );
+
+// The rest of the teacherSlice code remains unchanged
 
 const teacherSlice = createSlice({
   name: "teachers",

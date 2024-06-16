@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Card,
@@ -8,17 +8,25 @@ import {
   Button,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-
-import UserInfo from "../components/UserInfo"; // Import UserInfo component
+import { useDispatch, useSelector } from "react-redux";
+import { fetchTeachers } from "../features/teachers/teacherSlice";
+import { fetchStudents } from "../features/students/studentSlice";
+import UserInfo from "../components/UserInfo";
 
 export default function DirectorDashboard() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { teachers, status: teacherStatus } = useSelector(
+    (state) => state.teachers
+  );
+  const { students, status: studentStatus } = useSelector(
+    (state) => state.students
+  );
 
-  const directorInfo = {
-    totalTeachers: 75,
-    totalStudents: 1500,
-    ongoingProjects: 5,
-  };
+  useEffect(() => {
+    dispatch(fetchTeachers());
+    dispatch(fetchStudents());
+  }, [dispatch]);
 
   return (
     <Box padding={3} sx={{ position: "relative", minHeight: "100vh" }}>
@@ -32,7 +40,9 @@ export default function DirectorDashboard() {
               <Typography variant="h5" component="h2">
                 Total Teachers
               </Typography>
-              <Typography variant="h6">{directorInfo.totalTeachers}</Typography>
+              <Typography variant="h6">
+                {teacherStatus === "loading" ? "Loading..." : teachers.length}
+              </Typography>
               <Button
                 variant="contained"
                 color="primary"
@@ -50,7 +60,9 @@ export default function DirectorDashboard() {
               <Typography variant="h5" component="h2">
                 Total Students
               </Typography>
-              <Typography variant="h6">{directorInfo.totalStudents}</Typography>
+              <Typography variant="h6">
+                {studentStatus === "loading" ? "Loading..." : students.length}
+              </Typography>
               <Button
                 variant="contained"
                 color="primary"

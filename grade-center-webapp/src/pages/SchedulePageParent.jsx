@@ -16,7 +16,7 @@ export default function SchedulePageParent() {
   return (
     <Box sx={{ width: "100%", overflow: "hidden", position: "relative" }}>
       <Typography variant="h4" sx={{ m: 2 }}>
-        Children's Weekly Schedules
+        Your Children's Weekly Schedules
       </Typography>
       <Button
         variant="contained"
@@ -35,25 +35,34 @@ export default function SchedulePageParent() {
         parentData &&
         parentData.students.map((child) => (
           <Paper
-            key={child.userID}
+            key={child.studentId}
             elevation={3}
             sx={{ margin: 2, padding: 2 }}
           >
-            <Typography variant="h5">Student ID: {child.userID}</Typography>
+            <Typography variant="h5">Name: {child.name}</Typography>
+            <Typography variant="h6">
+              Study Group: {child.studyGroupName}
+            </Typography>
             <Box
               sx={{ display: "flex", justifyContent: "start", gap: 2, mt: 2 }}
             >
               <Button
                 variant="contained"
-                onClick={() => navigate(`/parent/${child.userID}/grades`)}
+                onClick={() => navigate(`/parent/${child.studentId}/grades`)}
               >
                 See Grades
               </Button>
               <Button
                 variant="contained"
-                onClick={() => navigate(`/parent/${child.userID}/schedule`)}
+                onClick={() => navigate(`/parent/${child.studentId}/schedule`)}
               >
                 See Full Schedule
+              </Button>
+              <Button
+                variant="contained"
+                onClick={() => navigate(`/parent/${child.studentId}/absences`)}
+              >
+                See Absences
               </Button>
             </Box>
           </Paper>
