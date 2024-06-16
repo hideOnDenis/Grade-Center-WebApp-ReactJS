@@ -1,15 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Typography, Paper, Box, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchParentData } from "../features/parents/parentSlice";
 
 export default function SchedulePageParent() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { parentData, status } = useSelector((state) => state.parent);
 
-  // Example static data for children
-  const children = [
-    { id: 1, name: "John" },
-    { id: 2, name: "Emma" },
-  ];
+  useEffect(() => {
+    dispatch(fetchParentData());
+  }, [dispatch]);
 
   return (
     <Box sx={{ width: "100%", overflow: "hidden", position: "relative" }}>
@@ -24,25 +26,43 @@ export default function SchedulePageParent() {
       >
         Back to Dashboard
       </Button>
-      {children.map((child) => (
-        <Paper key={child.id} elevation={3} sx={{ margin: 2, padding: 2 }}>
-          <Typography variant="h5">{child.name}</Typography>
-          <Box sx={{ display: "flex", justifyContent: "start", gap: 2, mt: 2 }}>
-            <Button
-              variant="contained"
-              onClick={() => navigate(`/parent/${child.id}/grades`)}
+      {status === "loading" && (
+        <Typography variant="h6" sx={{ m: 2 }}>
+          Loading...
+        </Typography>
+      )}
+      {status === "succeeded" &&
+        parentData &&
+        parentData.students.map((child) => (
+          <Paper
+            key={child.userID}
+            elevation={3}
+            sx={{ margin: 2, padding: 2 }}
+          >
+            <Typography variant="h5">Student ID: {child.userID}</Typography>
+            <Box
+              sx={{ display: "flex", justifyContent: "start", gap: 2, mt: 2 }}
             >
-              See Grades
-            </Button>
-            <Button
-              variant="contained"
-              onClick={() => navigate(`/parent/${child.id}/schedule`)}
-            >
-              See Full Schedule
-            </Button>
-          </Box>
-        </Paper>
-      ))}
+              <Button
+                variant="contained"
+                onClick={() => navigate(`/parent/${child.userID}/grades`)}
+              >
+                See Grades
+              </Button>
+              <Button
+                variant="contained"
+                onClick={() => navigate(`/parent/${child.userID}/schedule`)}
+              >
+                See Full Schedule
+              </Button>
+            </Box>
+          </Paper>
+        ))}
+      {status === "failed" && (
+        <Typography variant="h6" sx={{ m: 2 }}>
+          Failed to load parent data
+        </Typography>
+      )}
     </Box>
   );
 }
