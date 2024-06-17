@@ -14,7 +14,8 @@ export const fetchTeachers = createAsyncThunk(
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data.map((teacher) => ({
-        id: teacher.userID,
+        id: teacher.id, // Ensure the correct field is used for id
+        name: teacher.name,
         schoolName: teacher.schoolName,
         courses: teacher.courses,
         qualifications: teacher.qualifications,
@@ -34,7 +35,11 @@ export const addTeacher = createAsyncThunk(
   "teachers/addTeacher",
   async (teacherData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${domain}`, teacherData);
+      const token = localStorage.getItem("accessToken");
+      if (!token) throw new Error("No token found");
+      const response = await axios.post(`${domain}`, teacherData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       return response.data;
     } catch (error) {
       const message =
@@ -51,7 +56,11 @@ export const updateTeacher = createAsyncThunk(
   "teachers/updateTeacher",
   async ({ id, data }, { rejectWithValue }) => {
     try {
-      const response = await axios.patch(`${domain}/${id}`, data);
+      const token = localStorage.getItem("accessToken");
+      if (!token) throw new Error("No token found");
+      const response = await axios.patch(`${domain}/${id}`, data, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       return response.data;
     } catch (error) {
       const message =
@@ -68,7 +77,11 @@ export const deleteTeacher = createAsyncThunk(
   "teachers/deleteTeacher",
   async (id, { rejectWithValue }) => {
     try {
-      const response = await axios.delete(`${domain}/${id}`);
+      const token = localStorage.getItem("accessToken");
+      if (!token) throw new Error("No token found");
+      const response = await axios.delete(`${domain}/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       return { id };
     } catch (error) {
       const message =
@@ -79,8 +92,6 @@ export const deleteTeacher = createAsyncThunk(
     }
   }
 );
-
-// The rest of the teacherSlice code remains unchanged
 
 const teacherSlice = createSlice({
   name: "teachers",

@@ -16,14 +16,14 @@ export default function TeachersPage() {
 
   const columns = [
     { field: "id", headerName: "Teacher ID", width: 150 },
-    { field: "email", headerName: "Email", width: 200 },
     { field: "name", headerName: "Name", width: 200 },
+    { field: "schoolName", headerName: "School Name", width: 200 },
   ];
 
   const rows = teachers.map((teacher) => ({
     id: teacher.id,
-    email: teacher.email,
     name: teacher.name,
+    schoolName: teacher.schoolName,
   }));
 
   return (
