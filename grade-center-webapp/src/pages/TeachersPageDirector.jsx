@@ -1,21 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Box, Button, Typography } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
+import { fetchTeachers } from "../features/teachers/teacherSlice";
 
 export default function TeachersPage() {
   const navigate = useNavigate();
-  const [teachers] = useState([
-    { id: 1, email: "teacher1@example.com", name: "John Doe" },
-    { id: 2, email: "teacher2@example.com", name: "Jane Smith" },
-    { id: 3, email: "teacher3@example.com", name: "Emily Johnson" },
-  ]);
+  const dispatch = useDispatch();
+  const { teachers, status, error } = useSelector((state) => state.teachers);
+
+  useEffect(() => {
+    dispatch(fetchTeachers());
+  }, [dispatch]);
 
   const columns = [
     { field: "id", headerName: "Teacher ID", width: 150 },
     { field: "email", headerName: "Email", width: 200 },
     { field: "name", headerName: "Name", width: 200 },
   ];
+
+  const rows = teachers.map((teacher) => ({
+    id: teacher.id,
+    email: teacher.email,
+    name: teacher.name,
+  }));
 
   return (
     <Box sx={{ height: "calc(100vh - 64px - 16px - 16px)", width: "100%" }}>
@@ -38,13 +47,17 @@ export default function TeachersPage() {
           Back to Dashboard
         </Button>
       </Box>
-      <DataGrid
-        rows={teachers}
-        columns={columns}
-        pageSize={5}
-        components={{ Toolbar: GridToolbar }}
-        disableSelectionOnClick
-      />
+      {status === "loading" && <p>Loading...</p>}
+      {status === "failed" && <p>Error: {error}</p>}
+      {status === "succeeded" && (
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          pageSize={5}
+          components={{ Toolbar: GridToolbar }}
+          disableSelectionOnClick
+        />
+      )}
     </Box>
   );
 }

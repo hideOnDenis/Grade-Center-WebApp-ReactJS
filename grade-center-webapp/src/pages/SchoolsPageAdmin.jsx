@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -10,11 +11,22 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import { useNavigate } from "react-router-dom";
+import {
+  fetchSchools,
+  createSchool,
+  deleteSchool,
+} from "../features/schools/schoolSlice";
 
 export default function SchoolsPageAdmin() {
   const [open, setOpen] = useState(false);
   const [schoolData, setSchoolData] = useState({ name: "", address: "" });
-  const navigate = useNavigate(); // Initialize the navigate function
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { schools, status, error } = useSelector((state) => state.schools);
+
+  useEffect(() => {
+    dispatch(fetchSchools());
+  }, [dispatch]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -25,24 +37,57 @@ export default function SchoolsPageAdmin() {
   };
 
   const handleSave = () => {
-    console.log("Save data", schoolData); // Here you would handle the API call
-    setOpen(false);
+    dispatch(createSchool(schoolData))
+      .unwrap()
+      .then(() => {
+        dispatch(fetchSchools());
+        setOpen(false);
+      })
+      .catch((error) => {
+        console.error("Failed to create school", error);
+      });
   };
 
   const handleChange = (e) => {
     setSchoolData({ ...schoolData, [e.target.name]: e.target.value });
   };
 
+  const handleDelete = (id) => {
+    dispatch(deleteSchool(id))
+      .unwrap()
+      .then(() => {
+        dispatch(fetchSchools());
+      })
+      .catch((error) => {
+        console.error("Failed to delete school", error);
+      });
+  };
+
   const columns = [
+    { field: "id", headerName: "ID", width: 90 },
     { field: "name", headerName: "Name", width: 200 },
     { field: "address", headerName: "Address", width: 300 },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 150,
+      renderCell: (params) => (
+        <Button
+          variant="contained"
+          color="error"
+          onClick={() => handleDelete(params.row.id)}
+        >
+          Delete
+        </Button>
+      ),
+    },
   ];
 
-  // Static rows data
-  const rows = [
-    { id: 1, name: "Central High", address: "123 Main St" },
-    { id: 2, name: "North Grammar", address: "456 North St" },
-  ];
+  const rows = schools.map((school) => ({
+    id: school.id,
+    name: school.name,
+    address: school.address,
+  }));
 
   return (
     <Box sx={{ height: "calc(100vh - 64px - 16px - 16px)", width: "100%" }}>
@@ -65,14 +110,18 @@ export default function SchoolsPageAdmin() {
             variant="contained"
             style={{ marginLeft: 8 }}
             color="success"
-            onClick={() => navigate("/admin/dashboard")} // Add onClick handler to navigate
+            onClick={() => navigate("/admin/dashboard")}
           >
             Back to Dashboard
           </Button>
         </Box>
       </Box>
 
-      <DataGrid rows={rows} columns={columns} pageSize={5} />
+      {status === "loading" && <p>Loading...</p>}
+      {status === "failed" && <p>Error: {error}</p>}
+      {status === "succeeded" && (
+        <DataGrid rows={rows} columns={columns} pageSize={5} />
+      )}
 
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Add New School</DialogTitle>
