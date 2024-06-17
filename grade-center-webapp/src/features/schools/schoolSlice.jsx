@@ -31,7 +31,7 @@ export const fetchSchools = createAsyncThunk(
     try {
       const token = localStorage.getItem("accessToken");
       if (!token) throw new Error("No token found");
-      const response = await axios.get(`${domain}`, {
+      const response = await axios.get(`${domain}/names`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;

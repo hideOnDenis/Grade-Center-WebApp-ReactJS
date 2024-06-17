@@ -10,22 +10,32 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
 import { useNavigate } from "react-router-dom";
 import {
   fetchSchools,
   createSchool,
   deleteSchool,
 } from "../features/schools/schoolSlice";
+import {
+  fetchDirectors,
+  assignDirectorToSchool,
+} from "../features/directors/directorSlice";
 
 export default function SchoolsPageAdmin() {
   const [open, setOpen] = useState(false);
+  const [directorOpen, setDirectorOpen] = useState(false);
   const [schoolData, setSchoolData] = useState({ name: "", address: "" });
+  const [selectedSchoolId, setSelectedSchoolId] = useState(null);
+  const [selectedDirectorId, setSelectedDirectorId] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { schools, status, error } = useSelector((state) => state.schools);
+  const { directors } = useSelector((state) => state.directors);
 
   useEffect(() => {
     dispatch(fetchSchools());
+    dispatch(fetchDirectors());
   }, [dispatch]);
 
   const handleClickOpen = () => {
@@ -34,6 +44,15 @@ export default function SchoolsPageAdmin() {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleDirectorClickOpen = (schoolId) => {
+    setSelectedSchoolId(schoolId);
+    setDirectorOpen(true);
+  };
+
+  const handleDirectorClose = () => {
+    setDirectorOpen(false);
   };
 
   const handleSave = () => {
@@ -48,8 +67,29 @@ export default function SchoolsPageAdmin() {
       });
   };
 
+  const handleAssignDirector = () => {
+    dispatch(
+      assignDirectorToSchool({
+        directorId: selectedDirectorId,
+        schoolId: selectedSchoolId,
+      })
+    )
+      .unwrap()
+      .then(() => {
+        dispatch(fetchSchools());
+        setDirectorOpen(false);
+      })
+      .catch((error) => {
+        console.error("Failed to assign director", error);
+      });
+  };
+
   const handleChange = (e) => {
     setSchoolData({ ...schoolData, [e.target.name]: e.target.value });
+  };
+
+  const handleDirectorChange = (e) => {
+    setSelectedDirectorId(e.target.value);
   };
 
   const handleDelete = (id) => {
@@ -67,18 +107,36 @@ export default function SchoolsPageAdmin() {
     { field: "id", headerName: "ID", width: 90 },
     { field: "name", headerName: "Name", width: 200 },
     { field: "address", headerName: "Address", width: 300 },
+    { field: "directorName", headerName: "Director", width: 200 },
+    {
+      field: "teachersNames",
+      headerName: "Teachers",
+      width: 300,
+      renderCell: (params) =>
+        params.value && params.value.length > 0 ? params.value.join(", ") : "",
+    },
     {
       field: "actions",
       headerName: "Actions",
-      width: 150,
+      width: 300,
       renderCell: (params) => (
-        <Button
-          variant="contained"
-          color="error"
-          onClick={() => handleDelete(params.row.id)}
-        >
-          Delete
-        </Button>
+        <>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => handleDelete(params.row.id)}
+            style={{ marginRight: 8 }}
+          >
+            Delete
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => handleDirectorClickOpen(params.row.id)}
+          >
+            Assign Director
+          </Button>
+        </>
       ),
     },
   ];
@@ -87,6 +145,8 @@ export default function SchoolsPageAdmin() {
     id: school.id,
     name: school.name,
     address: school.address,
+    directorName: school.directorName || "",
+    teachersNames: school.teachersNames || [],
   }));
 
   return (
@@ -155,6 +215,33 @@ export default function SchoolsPageAdmin() {
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={handleSave}>Save</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={directorOpen} onClose={handleDirectorClose}>
+        <DialogTitle>Assign Director</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please select a director to assign to this school.
+          </DialogContentText>
+          <TextField
+            select
+            label="Director"
+            value={selectedDirectorId}
+            onChange={handleDirectorChange}
+            fullWidth
+            variant="standard"
+          >
+            {directors.map((director) => (
+              <MenuItem key={director.id} value={director.id}>
+                {director.name}
+              </MenuItem>
+            ))}
+          </TextField>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDirectorClose}>Cancel</Button>
+          <Button onClick={handleAssignDirector}>Assign</Button>
         </DialogActions>
       </Dialog>
     </Box>
