@@ -24,6 +24,27 @@ export const fetchDirectors = createAsyncThunk(
   }
 );
 
+// Async thunk to fetch the director's details
+export const fetchDirectorDetails = createAsyncThunk(
+  "directors/fetchDirectorDetails",
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) throw new Error("No token found");
+      const response = await axios.get(`${domain}/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data;
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to fetch director details";
+      return rejectWithValue(message);
+    }
+  }
+);
+
 // Async thunk to assign a director to a school
 export const assignDirectorToSchool = createAsyncThunk(
   "directors/assignDirectorToSchool",
@@ -53,6 +74,7 @@ const directorSlice = createSlice({
   name: "directors",
   initialState: {
     directors: [],
+    directorDetails: null,
     status: "idle",
     error: null,
   },
@@ -67,6 +89,17 @@ const directorSlice = createSlice({
         state.directors = action.payload;
       })
       .addCase(fetchDirectors.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(fetchDirectorDetails.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchDirectorDetails.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.directorDetails = action.payload;
+      })
+      .addCase(fetchDirectorDetails.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       })

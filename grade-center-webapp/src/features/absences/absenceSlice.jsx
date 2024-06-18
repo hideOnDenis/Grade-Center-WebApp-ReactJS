@@ -1,10 +1,33 @@
-// absenceSlice.jsx
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const domain = "http://localhost:8082";
 
-// Async thunk to fetch absences by student
+// Async thunk to fetch absences by student ID
+export const fetchAbsencesByStudentId = createAsyncThunk(
+  "absences/fetchAbsencesByStudentId",
+  async (studentId, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) throw new Error("No token found");
+      const response = await axios.get(
+        `${domain}/absences/student/${studentId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to fetch absences by student ID";
+      return rejectWithValue(message);
+    }
+  }
+);
+
+// Existing thunks
 export const fetchAbsencesByStudent = createAsyncThunk(
   "absences/fetchAbsencesByStudent",
   async (_, { rejectWithValue }) => {
@@ -75,6 +98,17 @@ const absenceSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(fetchAbsencesByStudentId.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchAbsencesByStudentId.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.absences = action.payload;
+      })
+      .addCase(fetchAbsencesByStudentId.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
       .addCase(fetchAbsencesByStudent.pending, (state) => {
         state.status = "loading";
       })

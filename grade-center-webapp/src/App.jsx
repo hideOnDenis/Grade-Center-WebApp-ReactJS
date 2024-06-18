@@ -20,6 +20,8 @@ import TeachersPage from "./pages/TeachersPageDirector.jsx";
 import AbsencePageStudent from "./pages/AbsencePageStudent.jsx";
 import StudentsPageTeacher from "./pages/StudentsPageTeacher.jsx";
 import GradesPageStudent from "./pages/GradesPageStudent.jsx";
+import AbsencePageParent from "./pages/AbsencePageParent.jsx";
+import GradesPageParent from "./pages/GradesPageParent.jsx";
 
 function App() {
   const dispatch = useDispatch();
@@ -54,6 +56,14 @@ function App() {
         <Route element={<ProtectedRoute allowedRoles={["parent"]} />}>
           <Route path="/parent/dashboard" element={<ParentDashboard />} />
           <Route path="/parent/schedule" element={<SchedulePageParent />} />
+          <Route
+            path="/parent/:studentId/absences"
+            element={<AbsencePageParent />}
+          />
+          <Route
+            path="/parent/:studentId/grades"
+            element={<GradesPageParent />}
+          />
         </Route>
         <Route element={<ProtectedRoute allowedRoles={["student"]} />}>
           <Route path="/student/dashboard" element={<StudentDashboard />} />
