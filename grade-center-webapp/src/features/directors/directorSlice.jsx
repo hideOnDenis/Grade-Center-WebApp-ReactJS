@@ -70,6 +70,31 @@ export const assignDirectorToSchool = createAsyncThunk(
   }
 );
 
+// Async thunk to remove a director from a school
+export const removeDirectorFromSchool = createAsyncThunk(
+  "directors/removeDirectorFromSchool",
+  async (schoolId, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) throw new Error("No token found");
+      const response = await axios.patch(
+        `${domain}/schoolId=${schoolId}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to remove director from school";
+      return rejectWithValue(message);
+    }
+  }
+);
+
 const directorSlice = createSlice({
   name: "directors",
   initialState: {
@@ -110,6 +135,16 @@ const directorSlice = createSlice({
         state.status = "succeeded";
       })
       .addCase(assignDirectorToSchool.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(removeDirectorFromSchool.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(removeDirectorFromSchool.fulfilled, (state) => {
+        state.status = "succeeded";
+      })
+      .addCase(removeDirectorFromSchool.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });

@@ -20,6 +20,7 @@ import {
 import {
   fetchDirectors,
   assignDirectorToSchool,
+  removeDirectorFromSchool,
 } from "../features/directors/directorSlice";
 
 export default function SchoolsPageAdmin() {
@@ -84,6 +85,17 @@ export default function SchoolsPageAdmin() {
       });
   };
 
+  const handleRemoveDirector = (schoolId) => {
+    dispatch(removeDirectorFromSchool(schoolId))
+      .unwrap()
+      .then(() => {
+        dispatch(fetchSchools());
+      })
+      .catch((error) => {
+        console.error("Failed to remove director", error);
+      });
+  };
+
   const handleChange = (e) => {
     setSchoolData({ ...schoolData, [e.target.name]: e.target.value });
   };
@@ -118,7 +130,7 @@ export default function SchoolsPageAdmin() {
     {
       field: "actions",
       headerName: "Actions",
-      width: 300,
+      width: 500,
       renderCell: (params) => (
         <>
           <Button
@@ -133,8 +145,16 @@ export default function SchoolsPageAdmin() {
             variant="contained"
             color="primary"
             onClick={() => handleDirectorClickOpen(params.row.id)}
+            style={{ marginRight: 8 }}
           >
             Assign Director
+          </Button>
+          <Button
+            variant="contained"
+            color="warning"
+            onClick={() => handleRemoveDirector(params.row.id)}
+          >
+            Remove Director
           </Button>
         </>
       ),
