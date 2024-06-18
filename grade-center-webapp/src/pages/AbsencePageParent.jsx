@@ -5,6 +5,7 @@ import { Box, Typography, Button, CircularProgress } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { fetchAbsencesByStudentId } from "../features/absences/absenceSlice";
 import { fetchCourseById } from "../features/courses/courseSlice";
+import { fetchStudentById } from "../features/students/studentSlice";
 
 export default function AbsencePageParent() {
   const { studentId } = useParams();
@@ -12,10 +13,14 @@ export default function AbsencePageParent() {
   const dispatch = useDispatch();
   const { absences, status, error } = useSelector((state) => state.absence);
   const { course, status: courseStatus } = useSelector((state) => state.course);
+  const { student, status: studentStatus } = useSelector(
+    (state) => state.students
+  );
 
   useEffect(() => {
     if (studentId) {
       dispatch(fetchAbsencesByStudentId(studentId));
+      dispatch(fetchStudentById(studentId)); // Fetch the student details
     }
   }, [dispatch, studentId]);
 
@@ -49,7 +54,10 @@ export default function AbsencePageParent() {
         }}
       >
         <Typography variant="h4" component="h1">
-          Absences for Student ID: {studentId}
+          Absences for{" "}
+          {studentStatus === "succeeded" && student
+            ? student.username
+            : `Student ID: ${studentId}`}
         </Typography>
         <Button
           variant="contained"

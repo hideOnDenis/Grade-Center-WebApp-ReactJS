@@ -11,21 +11,29 @@ import {
   Button,
   Box,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchOwnSchedule } from "../features/schedule/scheduleSlice";
+import { fetchScheduleByStudentId } from "../features/schedule/scheduleSlice";
+import { fetchStudentById } from "../features/students/studentSlice";
 
-export default function SchedulePageStudent() {
+export default function WeeklyScheduleParent() {
+  const { studentId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { ownSchedule, status } = useSelector((state) => state.schedule);
+  const { studentSchedule, status } = useSelector((state) => state.schedule);
+  const { student, status: studentStatus } = useSelector(
+    (state) => state.students
+  );
 
   useEffect(() => {
-    dispatch(fetchOwnSchedule());
-  }, [dispatch]);
+    if (studentId) {
+      dispatch(fetchScheduleByStudentId(studentId));
+      dispatch(fetchStudentById(studentId));
+    }
+  }, [dispatch, studentId]);
 
   // Transform the schedule data to the format required by the component
-  const transformedSchedule = ownSchedule.reduce((acc, item) => {
+  const transformedSchedule = studentSchedule.reduce((acc, item) => {
     const dayIndex = acc.findIndex((day) => day.day === item.weekday);
     const classDetail = {
       time: `${item.schoolHour.hour}:${item.schoolHour.minute < 10 ? "0" : ""}${
@@ -60,13 +68,14 @@ export default function SchedulePageStudent() {
         <Button
           variant="contained"
           color="success"
-          onClick={() => navigate("/student/dashboard")}
+          onClick={() => navigate("/parent/dashboard")}
         >
           Back to Dashboard
         </Button>
       </Box>
       <Typography variant="h4" component="h2" sx={{ padding: 2 }}>
-        Weekly Schedule
+        Weekly Schedule for{" "}
+        {studentStatus === "succeeded" ? student.username : "Student"}
       </Typography>
       <TableContainer component={Paper}>
         <Table stickyHeader aria-label="schedule table" sx={{ minWidth: 750 }}>

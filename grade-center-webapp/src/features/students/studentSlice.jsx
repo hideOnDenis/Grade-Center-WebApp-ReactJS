@@ -1,4 +1,3 @@
-// studentSlice.jsx
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -25,10 +24,32 @@ export const fetchStudents = createAsyncThunk(
   }
 );
 
+// Async thunk to fetch a specific student by ID
+export const fetchStudentById = createAsyncThunk(
+  "students/fetchStudentById",
+  async (studentId, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) throw new Error("No token found");
+      const response = await axios.get(`${domain}/full/id=${studentId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data;
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to fetch student details";
+      return rejectWithValue(message);
+    }
+  }
+);
+
 const studentSlice = createSlice({
   name: "students",
   initialState: {
     students: [],
+    student: null, // Add a state for a single student
     status: "idle",
     error: null,
   },
@@ -43,6 +64,17 @@ const studentSlice = createSlice({
         state.students = action.payload;
       })
       .addCase(fetchStudents.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(fetchStudentById.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchStudentById.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.student = action.payload;
+      })
+      .addCase(fetchStudentById.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });

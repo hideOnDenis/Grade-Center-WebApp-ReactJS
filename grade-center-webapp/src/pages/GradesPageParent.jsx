@@ -5,6 +5,7 @@ import { Box, Typography, Button, CircularProgress } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { fetchGradesByStudentId } from "../features/grades/gradeSlice";
 import { fetchCourseById } from "../features/courses/courseSlice";
+import { fetchStudentById } from "../features/students/studentSlice";
 
 export default function GradesPageParent() {
   const { studentId } = useParams();
@@ -12,10 +13,14 @@ export default function GradesPageParent() {
   const dispatch = useDispatch();
   const { grades, status, error } = useSelector((state) => state.grades);
   const { course, status: courseStatus } = useSelector((state) => state.course);
+  const { student, status: studentStatus } = useSelector(
+    (state) => state.students
+  );
 
   useEffect(() => {
     if (studentId) {
       dispatch(fetchGradesByStudentId(studentId));
+      dispatch(fetchStudentById(studentId)); // Fetch the student details
     }
   }, [dispatch, studentId]);
 
@@ -49,7 +54,10 @@ export default function GradesPageParent() {
         }}
       >
         <Typography variant="h4" component="h1">
-          Grades for Student ID: {studentId}
+          Grades for{" "}
+          {studentStatus === "succeeded" && student
+            ? student.username
+            : `Student ID: ${studentId}`}
         </Typography>
         <Button
           variant="contained"
