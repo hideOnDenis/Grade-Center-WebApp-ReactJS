@@ -10,15 +10,20 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUsers } from "../features/users/userSlice";
+import { fetchStudents } from "../features/students/studentSlice"; // Import fetchStudents action
 import UserInfo from "../components/UserInfo";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { users, status } = useSelector((state) => state.user);
+  const { users, status: userStatus } = useSelector((state) => state.user);
+  const { students, status: studentStatus } = useSelector(
+    (state) => state.students
+  ); // Get students from state
 
   useEffect(() => {
     dispatch(fetchUsers());
+    dispatch(fetchStudents()); // Fetch students
   }, [dispatch]);
 
   return (
@@ -33,7 +38,7 @@ export default function AdminDashboard() {
               <Typography variant="h5" component="h2">
                 Total Users
               </Typography>
-              {status === "loading" ? (
+              {userStatus === "loading" ? (
                 <Typography variant="h6">Loading...</Typography>
               ) : (
                 <Typography variant="h6">
@@ -73,6 +78,39 @@ export default function AdminDashboard() {
                 onClick={() => navigate("/admin/schools")}
               >
                 Manage Schools
+              </Button>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          {" "}
+          {/* New Students grid */}
+          <Card>
+            <CardContent>
+              <Typography variant="h5" component="h2">
+                Total Students
+              </Typography>
+              {studentStatus === "loading" ? (
+                <Typography variant="h6">Loading...</Typography>
+              ) : (
+                <Typography variant="h6">{students.length}</Typography>
+              )}
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <Card>
+            <CardContent>
+              <Typography variant="h5" component="h2">
+                Students
+              </Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{ mt: 2 }}
+                onClick={() => navigate("/admin/students")}
+              >
+                Manage Students
               </Button>
             </CardContent>
           </Card>
