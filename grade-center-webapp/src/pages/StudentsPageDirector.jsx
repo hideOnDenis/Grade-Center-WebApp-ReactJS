@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -12,14 +12,34 @@ import {
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchStudentsBySchoolId } from "../features/students/studentSlice";
+import { fetchDirectorDetails } from "../features/directors/directorSlice";
 
 export default function StudentsPageDirector() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { directorDetails, status: directorStatus } = useSelector(
+    (state) => state.directors
+  );
+  const { students, status: studentStatus } = useSelector(
+    (state) => state.students
+  );
   const [open, setOpen] = useState(false);
   const [assignmentData, setAssignmentData] = useState({
     studentId: "",
     grade: "",
   });
+
+  useEffect(() => {
+    if (directorDetails && directorDetails.schoolId) {
+      dispatch(fetchStudentsBySchoolId(directorDetails.schoolId));
+    }
+  }, [directorDetails, dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchDirectorDetails());
+  }, [dispatch]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -42,22 +62,24 @@ export default function StudentsPageDirector() {
   };
 
   const columns = [
-    { field: "name", headerName: "Name", width: 200 },
+    { field: "username", headerName: "Name", width: 200 },
     { field: "grade", headerName: "Grade", width: 100 },
-  ];
-
-  // Static rows data for demonstration
-  const rows = [
-    { id: 1, name: "John Doe", grade: "10" },
-    { id: 2, name: "Jane Smith", grade: "12" },
-  ];
-
-  // Mock students data for the dropdown
-  const students = [
-    { id: 1, name: "John Doe" },
-    { id: 2, name: "Jane Smith" },
-    { id: 3, name: "Alice Johnson" },
-    { id: 4, name: "Bob Brown" },
+    {
+      field: "parents",
+      headerName: "Parents",
+      width: 300,
+      renderCell: (params) =>
+        Array.isArray(params.value) ? params.value.join(", ") : "None",
+    },
+    {
+      field: "courses",
+      headerName: "Courses",
+      width: 300,
+      renderCell: (params) =>
+        Array.isArray(params.value)
+          ? params.value.map((course) => course.name).join(", ")
+          : "",
+    },
   ];
 
   return (
@@ -88,7 +110,18 @@ export default function StudentsPageDirector() {
         </Box>
       </Box>
 
-      <DataGrid rows={rows} columns={columns} pageSize={5} />
+      <DataGrid
+        rows={students.map((student) => ({
+          id: student.id,
+          username: student.username,
+          grade: student.grade,
+          parents: student.parent,
+          courses: student.courses,
+        }))}
+        columns={columns}
+        pageSize={5}
+        loading={studentStatus === "loading" || directorStatus === "loading"}
+      />
 
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Assign to Grade/Class</DialogTitle>
@@ -105,7 +138,7 @@ export default function StudentsPageDirector() {
           >
             {students.map((student) => (
               <MenuItem key={student.id} value={student.id}>
-                {student.name}
+                {student.username}
               </MenuItem>
             ))}
           </TextField>

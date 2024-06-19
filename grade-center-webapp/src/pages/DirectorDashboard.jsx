@@ -9,8 +9,9 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchTeachers } from "../features/teachers/teacherSlice";
-import { fetchStudents } from "../features/students/studentSlice";
+import { fetchTeachersBySchoolId } from "../features/teachers/teacherSlice";
+import { fetchStudentsBySchoolId } from "../features/students/studentSlice";
+import { fetchDirectorDetails } from "../features/directors/directorSlice";
 import UserInfo from "../components/UserInfo";
 
 export default function DirectorDashboard() {
@@ -22,11 +23,24 @@ export default function DirectorDashboard() {
   const { students, status: studentStatus } = useSelector(
     (state) => state.students
   );
+  const { directorDetails, status: directorStatus } = useSelector(
+    (state) => state.directors
+  );
 
   useEffect(() => {
-    dispatch(fetchTeachers());
-    dispatch(fetchStudents());
+    dispatch(fetchDirectorDetails());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (directorDetails?.schoolId) {
+      dispatch(fetchTeachersBySchoolId(directorDetails.schoolId));
+      dispatch(fetchStudentsBySchoolId(directorDetails.schoolId));
+    }
+  }, [directorDetails, dispatch]);
+
+  if (directorStatus === "loading") {
+    return <Typography>Loading...</Typography>;
+  }
 
   return (
     <Box padding={3} sx={{ position: "relative", minHeight: "100vh" }}>
