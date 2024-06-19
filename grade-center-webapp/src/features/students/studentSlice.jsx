@@ -45,11 +45,36 @@ export const fetchStudentById = createAsyncThunk(
   }
 );
 
+// Async thunk to assign a parent to a student
+export const assignParentToStudent = createAsyncThunk(
+  "students/assignParentToStudent",
+  async ({ studentId, parentsID, classesID }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) throw new Error("No token found");
+      const response = await axios.put(
+        `${domain}/id=${studentId}`,
+        { parentsID, classesID },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to assign parent to student";
+      return rejectWithValue(message);
+    }
+  }
+);
+
 const studentSlice = createSlice({
   name: "students",
   initialState: {
     students: [],
-    student: null, // Add a state for a single student
+    student: null,
     status: "idle",
     error: null,
   },
@@ -75,6 +100,21 @@ const studentSlice = createSlice({
         state.student = action.payload;
       })
       .addCase(fetchStudentById.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(assignParentToStudent.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(assignParentToStudent.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        // Optionally update the students list if necessary
+        const updatedStudent = action.payload;
+        state.students = state.students.map((student) =>
+          student.id === updatedStudent.id ? updatedStudent : student
+        );
+      })
+      .addCase(assignParentToStudent.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });

@@ -8,15 +8,20 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchStudents } from "../features/students/studentSlice";
 import {
-  fetchAllAbsences,
-  deleteAbsence,
-} from "../features/absences/absenceSlice";
+  fetchStudents,
+  assignParentToStudent,
+} from "../features/students/studentSlice";
+import { fetchAllAbsences } from "../features/absences/absenceSlice";
+import { fetchAllParents } from "../features/parents/parentSlice";
 
 export default function StudentsPageAdmin() {
   const navigate = useNavigate();
@@ -27,15 +32,19 @@ export default function StudentsPageAdmin() {
   const { absences, status: absenceStatus } = useSelector(
     (state) => state.absence
   );
+  const { allParents, status: parentStatus } = useSelector(
+    (state) => state.parent
+  );
   const [openAssignParent, setOpenAssignParent] = useState(false);
   const [parentData, setParentData] = useState({
     studentId: "",
-    parent: "",
+    parentId: "",
   });
 
   useEffect(() => {
     dispatch(fetchStudents());
     dispatch(fetchAllAbsences());
+    dispatch(fetchAllParents());
   }, [dispatch]);
 
   const countStudentAbsences = (studentId) => {
@@ -91,13 +100,22 @@ export default function StudentsPageAdmin() {
   const handleCloseAssignParent = () => setOpenAssignParent(false);
 
   const handleParentChange = (event) => {
-    const { name, value } = event.target;
-    setParentData({ ...parentData, [name]: value });
+    const { value } = event.target;
+    setParentData({ ...parentData, parentId: value });
   };
 
   const handleParentSubmit = () => {
-    console.log("Assigning parent data:", parentData); // Debugging log
-    // Implement the submit logic here
+    const { studentId, parentId } = parentData;
+    dispatch(
+      assignParentToStudent({ studentId, parentsID: [parentId], classesID: 1 })
+    )
+      .unwrap()
+      .then(() => {
+        dispatch(fetchStudents()); // Refresh the student list after assigning the parent
+      })
+      .catch((error) => {
+        console.error("Failed to assign parent", error);
+      });
     handleCloseAssignParent();
   };
 
@@ -134,23 +152,31 @@ export default function StudentsPageAdmin() {
         pageSize={5}
         components={{ Toolbar: GridToolbar }}
         disableSelectionOnClick
-        loading={studentStatus === "loading" || absenceStatus === "loading"}
+        loading={
+          studentStatus === "loading" ||
+          absenceStatus === "loading" ||
+          parentStatus === "loading"
+        }
       />
 
       <Dialog open={openAssignParent} onClose={handleCloseAssignParent}>
         <DialogTitle>Assign Parent</DialogTitle>
         <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            name="parent"
-            label="Parent Name"
-            type="text"
-            fullWidth
-            variant="standard"
-            value={parentData.parent}
-            onChange={handleParentChange}
-          />
+          <FormControl fullWidth margin="dense">
+            <InputLabel>Parent</InputLabel>
+            <Select
+              name="parent"
+              value={parentData.parentId}
+              onChange={handleParentChange}
+              label="Parent"
+            >
+              {allParents.map((parent) => (
+                <MenuItem key={parent.parentId} value={parent.parentId}>
+                  {parent.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseAssignParent}>Cancel</Button>
