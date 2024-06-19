@@ -91,6 +91,31 @@ export const assignParentToStudent = createAsyncThunk(
   }
 );
 
+// Async thunk to add a student to a study group
+export const addStudentToStudyGroup = createAsyncThunk(
+  "students/addStudentToStudyGroup",
+  async ({ studentId, studyGroupId }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) throw new Error("No token found");
+      const response = await axios.put(
+        `${domain}/id=${studentId}/toStudyGroup/${studyGroupId}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to add student to study group";
+      return rejectWithValue(message);
+    }
+  }
+);
+
 const studentSlice = createSlice({
   name: "students",
   initialState: {
@@ -146,6 +171,17 @@ const studentSlice = createSlice({
         );
       })
       .addCase(assignParentToStudent.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(addStudentToStudyGroup.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(addStudentToStudyGroup.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        // Optionally update the state to reflect the change
+      })
+      .addCase(addStudentToStudyGroup.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });

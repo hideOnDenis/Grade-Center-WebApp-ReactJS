@@ -19,8 +19,13 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   fetchStudyGroups,
   createStudyGroup,
+  deleteStudyGroup,
 } from "../features/study groups/groupSlice";
 import { fetchSchools } from "../features/schools/schoolSlice";
+import {
+  fetchStudents,
+  addStudentToStudyGroup,
+} from "../features/students/studentSlice";
 
 export default function StudyGroupsAdmin() {
   const navigate = useNavigate();
@@ -31,12 +36,19 @@ export default function StudyGroupsAdmin() {
   const { schools, status: schoolStatus } = useSelector(
     (state) => state.schools
   );
+  const { students, status: studentStatus } = useSelector(
+    (state) => state.students
+  );
   const [open, setOpen] = useState(false);
+  const [openAddStudent, setOpenAddStudent] = useState(false);
   const [groupData, setGroupData] = useState({ name: "", schoolId: "" });
+  const [selectedGroupId, setSelectedGroupId] = useState(null);
+  const [selectedStudentId, setSelectedStudentId] = useState("");
 
   useEffect(() => {
     dispatch(fetchStudyGroups());
     dispatch(fetchSchools());
+    dispatch(fetchStudents());
   }, [dispatch]);
 
   const handleClickOpen = () => {
@@ -63,14 +75,87 @@ export default function StudyGroupsAdmin() {
       });
   };
 
+  const handleDelete = (id) => {
+    dispatch(deleteStudyGroup(id))
+      .unwrap()
+      .then(() => {
+        dispatch(fetchStudyGroups());
+      })
+      .catch((error) => {
+        console.error("Failed to delete study group", error);
+      });
+  };
+
+  const handleOpenAddStudent = (groupId) => {
+    setSelectedGroupId(groupId);
+    setOpenAddStudent(true);
+  };
+
+  const handleCloseAddStudent = () => {
+    setOpenAddStudent(false);
+  };
+
+  const handleAddStudentToGroup = () => {
+    dispatch(
+      addStudentToStudyGroup({
+        studentId: selectedStudentId,
+        studyGroupId: selectedGroupId,
+      })
+    )
+      .unwrap()
+      .then(() => {
+        dispatch(fetchStudyGroups());
+        setOpenAddStudent(false);
+      })
+      .catch((error) => {
+        console.error("Failed to add student to study group", error);
+      });
+  };
+
   const columns = [
     { field: "id", headerName: "ID", width: 90 },
     { field: "name", headerName: "Name", width: 200 },
+    { field: "schoolName", headerName: "School Name", width: 200 },
+    {
+      field: "students",
+      headerName: "Students",
+      width: 300,
+      renderCell: (params) =>
+        params.value && params.value.length > 0
+          ? params.value.map((student) => student.username).join(", ")
+          : "None",
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 250,
+      renderCell: (params) => (
+        <Box>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => handleDelete(params.row.id)}
+            sx={{ marginRight: 1 }}
+          >
+            Delete
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => handleOpenAddStudent(params.row.id)}
+          >
+            Add Student
+          </Button>
+        </Box>
+      ),
+    },
   ];
 
   const rows = studyGroups.map((group) => ({
     id: group.id,
     name: group.name,
+    schoolName: group.schoolName || "",
+    students: group.students,
   }));
 
   return (
@@ -106,7 +191,7 @@ export default function StudyGroupsAdmin() {
         pageSize={5}
         components={{ Toolbar: GridToolbar }}
         disableSelectionOnClick
-        loading={studyGroupStatus === "loading"}
+        loading={studyGroupStatus === "loading" || studentStatus === "loading"}
       />
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Add New Study Group</DialogTitle>
@@ -141,6 +226,30 @@ export default function StudyGroupsAdmin() {
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={handleSave}>Save</Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={openAddStudent} onClose={handleCloseAddStudent}>
+        <DialogTitle>Add Student to Study Group</DialogTitle>
+        <DialogContent>
+          <FormControl fullWidth margin="dense">
+            <InputLabel>Student</InputLabel>
+            <Select
+              name="studentId"
+              value={selectedStudentId}
+              onChange={(e) => setSelectedStudentId(e.target.value)}
+              label="Student"
+            >
+              {students.map((student) => (
+                <MenuItem key={student.id} value={student.id}>
+                  {student.username}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseAddStudent}>Cancel</Button>
+          <Button onClick={handleAddStudentToGroup}>Add</Button>
         </DialogActions>
       </Dialog>
     </Box>

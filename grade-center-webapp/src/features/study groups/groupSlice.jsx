@@ -46,6 +46,27 @@ export const createStudyGroup = createAsyncThunk(
   }
 );
 
+// Async thunk to delete a study group
+export const deleteStudyGroup = createAsyncThunk(
+  "groups/deleteStudyGroup",
+  async (id, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) throw new Error("No token found");
+      await axios.delete(`${domain}/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return id;
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to delete study group";
+      return rejectWithValue(message);
+    }
+  }
+);
+
 const groupSlice = createSlice({
   name: "groups",
   initialState: {
@@ -75,6 +96,19 @@ const groupSlice = createSlice({
         state.studyGroups.push(action.payload);
       })
       .addCase(createStudyGroup.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(deleteStudyGroup.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(deleteStudyGroup.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.studyGroups = state.studyGroups.filter(
+          (group) => group.id !== action.payload
+        );
+      })
+      .addCase(deleteStudyGroup.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });

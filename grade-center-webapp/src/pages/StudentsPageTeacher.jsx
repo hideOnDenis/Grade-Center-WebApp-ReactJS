@@ -12,7 +12,8 @@ import {
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchStudents } from "../features/students/studentSlice";
+import { fetchStudentsBySchoolId } from "../features/students/studentSlice";
+import { fetchTeacherDetails } from "../features/teachers/teacherSlice";
 import {
   fetchAllAbsences,
   deleteAbsence,
@@ -27,6 +28,10 @@ export default function StudentsPageTeacher() {
   const { absences, status: absenceStatus } = useSelector(
     (state) => state.absence
   );
+  const { teacherDetails, status: teacherStatus } = useSelector(
+    (state) => state.teachers
+  );
+
   const [openGrade, setOpenGrade] = useState(false);
   const [openAbsence, setOpenAbsence] = useState(false);
   const [gradeData, setGradeData] = useState({
@@ -40,9 +45,15 @@ export default function StudentsPageTeacher() {
   });
 
   useEffect(() => {
-    dispatch(fetchStudents());
-    dispatch(fetchAllAbsences());
+    dispatch(fetchTeacherDetails());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (teacherDetails && teacherDetails.schoolId) {
+      dispatch(fetchStudentsBySchoolId(teacherDetails.schoolId));
+      dispatch(fetchAllAbsences());
+    }
+  }, [dispatch, teacherDetails]);
 
   const countStudentAbsences = (studentId) => {
     if (!absences) return 0;

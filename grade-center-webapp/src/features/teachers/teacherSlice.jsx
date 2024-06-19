@@ -170,10 +170,32 @@ export const removeTeacherFromSchool = createAsyncThunk(
   }
 );
 
+// Async thunk to fetch personal details of the logged-in teacher
+export const fetchTeacherDetails = createAsyncThunk(
+  "teachers/fetchTeacherDetails",
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) throw new Error("No token found");
+      const response = await axios.get(`${domain}/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data;
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to fetch teacher details";
+      return rejectWithValue(message);
+    }
+  }
+);
+
 const teacherSlice = createSlice({
   name: "teachers",
   initialState: {
     teachers: [],
+    teacherDetails: null,
     status: "idle",
     error: null,
   },
@@ -262,6 +284,17 @@ const teacherSlice = createSlice({
         // Optionally update state to reflect changes
       })
       .addCase(removeTeacherFromSchool.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(fetchTeacherDetails.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchTeacherDetails.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.teacherDetails = action.payload;
+      })
+      .addCase(fetchTeacherDetails.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });

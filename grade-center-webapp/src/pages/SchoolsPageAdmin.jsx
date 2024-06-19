@@ -196,14 +196,14 @@ export default function SchoolsPageAdmin() {
     {
       field: "teachersNames",
       headerName: "Teachers",
-      width: 300,
+      width: 200,
       renderCell: (params) =>
         params.value && params.value.length > 0 ? params.value.join(", ") : "",
     },
     {
       field: "actions",
       headerName: "Actions",
-      width: 700,
+      width: 900,
       renderCell: (params) => (
         <>
           <Button
