@@ -117,6 +117,59 @@ export const fetchTeachersBySchoolId = createAsyncThunk(
   }
 );
 
+// Async thunk to assign a teacher to a school
+export const assignTeacherToSchool = createAsyncThunk(
+  "teachers/assignTeacherToSchool",
+  async (
+    { teacherId, schoolId, courseIds = [], qualificationsIds = [] },
+    { rejectWithValue }
+  ) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) throw new Error("No token found");
+      const response = await axios.put(
+        `${domain}/id=${teacherId}`,
+        { schoolId, courseIds, qualificationsIds },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to assign teacher to school";
+      return rejectWithValue(message);
+    }
+  }
+);
+
+// Async thunk to remove a teacher from a school
+export const removeTeacherFromSchool = createAsyncThunk(
+  "teachers/removeTeacherFromSchool",
+  async ({ teacherId }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) throw new Error("No token found");
+      const response = await axios.patch(
+        `${domain}/remove-teacher-school/id=${teacherId}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to remove teacher from school";
+      return rejectWithValue(message);
+    }
+  }
+);
+
 const teacherSlice = createSlice({
   name: "teachers",
   initialState: {
@@ -187,6 +240,28 @@ const teacherSlice = createSlice({
         state.teachers = action.payload;
       })
       .addCase(fetchTeachersBySchoolId.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(assignTeacherToSchool.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(assignTeacherToSchool.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        // Optionally update state to reflect changes
+      })
+      .addCase(assignTeacherToSchool.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(removeTeacherFromSchool.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(removeTeacherFromSchool.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        // Optionally update state to reflect changes
+      })
+      .addCase(removeTeacherFromSchool.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });

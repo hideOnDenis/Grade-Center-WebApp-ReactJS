@@ -22,21 +22,33 @@ import {
   assignDirectorToSchool,
   removeDirectorFromSchool,
 } from "../features/directors/directorSlice";
+import {
+  fetchTeachers,
+  assignTeacherToSchool,
+  removeTeacherFromSchool,
+  fetchTeachersBySchoolId,
+} from "../features/teachers/teacherSlice";
 
 export default function SchoolsPageAdmin() {
   const [open, setOpen] = useState(false);
   const [directorOpen, setDirectorOpen] = useState(false);
+  const [teacherOpen, setTeacherOpen] = useState(false);
+  const [removeTeacherOpen, setRemoveTeacherOpen] = useState(false);
   const [schoolData, setSchoolData] = useState({ name: "", address: "" });
   const [selectedSchoolId, setSelectedSchoolId] = useState(null);
   const [selectedDirectorId, setSelectedDirectorId] = useState("");
+  const [selectedTeacherId, setSelectedTeacherId] = useState("");
+  const [teachersBySchool, setTeachersBySchool] = useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { schools, status, error } = useSelector((state) => state.schools);
   const { directors } = useSelector((state) => state.directors);
+  const { teachers } = useSelector((state) => state.teachers);
 
   useEffect(() => {
     dispatch(fetchSchools());
     dispatch(fetchDirectors());
+    dispatch(fetchTeachers());
   }, [dispatch]);
 
   const handleClickOpen = () => {
@@ -52,8 +64,34 @@ export default function SchoolsPageAdmin() {
     setDirectorOpen(true);
   };
 
+  const handleTeacherClickOpen = (schoolId) => {
+    setSelectedSchoolId(schoolId);
+    setTeacherOpen(true);
+  };
+
+  const handleRemoveTeacherClickOpen = (schoolId) => {
+    setSelectedSchoolId(schoolId);
+    dispatch(fetchTeachersBySchoolId(schoolId))
+      .unwrap()
+      .then((data) => {
+        setTeachersBySchool(data);
+        setRemoveTeacherOpen(true);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch teachers by school ID", error);
+      });
+  };
+
   const handleDirectorClose = () => {
     setDirectorOpen(false);
+  };
+
+  const handleTeacherClose = () => {
+    setTeacherOpen(false);
+  };
+
+  const handleRemoveTeacherClose = () => {
+    setRemoveTeacherOpen(false);
   };
 
   const handleSave = () => {
@@ -85,6 +123,25 @@ export default function SchoolsPageAdmin() {
       });
   };
 
+  const handleAssignTeacher = () => {
+    dispatch(
+      assignTeacherToSchool({
+        teacherId: selectedTeacherId,
+        schoolId: selectedSchoolId,
+        courseIds: [],
+        qualificationsIds: [],
+      })
+    )
+      .unwrap()
+      .then(() => {
+        dispatch(fetchSchools());
+        setTeacherOpen(false);
+      })
+      .catch((error) => {
+        console.error("Failed to assign teacher", error);
+      });
+  };
+
   const handleRemoveDirector = (schoolId) => {
     dispatch(removeDirectorFromSchool(schoolId))
       .unwrap()
@@ -96,12 +153,28 @@ export default function SchoolsPageAdmin() {
       });
   };
 
+  const handleRemoveTeacher = () => {
+    dispatch(removeTeacherFromSchool({ teacherId: selectedTeacherId }))
+      .unwrap()
+      .then(() => {
+        dispatch(fetchSchools());
+        setRemoveTeacherOpen(false);
+      })
+      .catch((error) => {
+        console.error("Failed to remove teacher", error);
+      });
+  };
+
   const handleChange = (e) => {
     setSchoolData({ ...schoolData, [e.target.name]: e.target.value });
   };
 
   const handleDirectorChange = (e) => {
     setSelectedDirectorId(e.target.value);
+  };
+
+  const handleTeacherChange = (e) => {
+    setSelectedTeacherId(e.target.value);
   };
 
   const handleDelete = (id) => {
@@ -130,7 +203,7 @@ export default function SchoolsPageAdmin() {
     {
       field: "actions",
       headerName: "Actions",
-      width: 500,
+      width: 700,
       renderCell: (params) => (
         <>
           <Button
@@ -151,10 +224,26 @@ export default function SchoolsPageAdmin() {
           </Button>
           <Button
             variant="contained"
+            color="primary"
+            onClick={() => handleTeacherClickOpen(params.row.id)}
+            style={{ marginRight: 8 }}
+          >
+            Assign Teacher
+          </Button>
+          <Button
+            variant="contained"
             color="warning"
             onClick={() => handleRemoveDirector(params.row.id)}
+            style={{ marginRight: 8 }}
           >
             Remove Director
+          </Button>
+          <Button
+            variant="contained"
+            color="warning"
+            onClick={() => handleRemoveTeacherClickOpen(params.row.id)} // Open modal to select teacher to remove
+          >
+            Remove Teacher
           </Button>
         </>
       ),
@@ -262,6 +351,60 @@ export default function SchoolsPageAdmin() {
         <DialogActions>
           <Button onClick={handleDirectorClose}>Cancel</Button>
           <Button onClick={handleAssignDirector}>Assign</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={teacherOpen} onClose={handleTeacherClose}>
+        <DialogTitle>Assign Teacher</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please select a teacher to assign to this school.
+          </DialogContentText>
+          <TextField
+            select
+            label="Teacher"
+            value={selectedTeacherId}
+            onChange={handleTeacherChange}
+            fullWidth
+            variant="standard"
+          >
+            {teachers.map((teacher) => (
+              <MenuItem key={teacher.id} value={teacher.id}>
+                {teacher.name}
+              </MenuItem>
+            ))}
+          </TextField>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleTeacherClose}>Cancel</Button>
+          <Button onClick={handleAssignTeacher}>Assign</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={removeTeacherOpen} onClose={handleRemoveTeacherClose}>
+        <DialogTitle>Remove Teacher</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please select a teacher to remove from this school.
+          </DialogContentText>
+          <TextField
+            select
+            label="Teacher"
+            value={selectedTeacherId}
+            onChange={handleTeacherChange}
+            fullWidth
+            variant="standard"
+          >
+            {teachersBySchool.map((teacher) => (
+              <MenuItem key={teacher.id} value={teacher.id}>
+                {teacher.username}
+              </MenuItem>
+            ))}
+          </TextField>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleRemoveTeacherClose}>Cancel</Button>
+          <Button onClick={handleRemoveTeacher}>Remove</Button>
         </DialogActions>
       </Dialog>
     </Box>
