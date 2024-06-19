@@ -24,6 +24,7 @@ import AbsencePageParent from "./pages/AbsencePageParent.jsx";
 import GradesPageParent from "./pages/GradesPageParent.jsx";
 import WeeklyScheduleParent from "./pages/WeeklyScheduleParent.jsx";
 import StudentsPageAdmin from "./pages/StudentsPageAdmin.jsx";
+import StudyGroupsAdmin from "./pages/StudyGroupsAdmin.jsx";
 
 function App() {
   const dispatch = useDispatch();
@@ -46,6 +47,7 @@ function App() {
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/schools" element={<SchoolsPageAdmin />} />
           <Route path="/admin/students" element={<StudentsPageAdmin />} />
+          <Route path="/admin/studygroups" element={<StudyGroupsAdmin />} />
         </Route>
         <Route element={<ProtectedRoute allowedRoles={["director"]} />}>
           <Route path="/director/dashboard" element={<DirectorDashboard />} />

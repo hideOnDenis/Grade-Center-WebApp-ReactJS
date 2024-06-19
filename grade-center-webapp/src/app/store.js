@@ -10,6 +10,7 @@ import parentReducer from "../features/parents/parentSlice.jsx";
 import schoolReducer from "../features/schools/schoolSlice.jsx";
 import directorReducer from "../features/directors/directorSlice.jsx";
 import courseReducer from "../features/courses/courseSlice.jsx";
+import groupReducer from "../features/study groups/groupSlice.jsx";
 
 export const store = configureStore({
     reducer: {
@@ -24,6 +25,7 @@ export const store = configureStore({
         schools: schoolReducer,
         directors: directorReducer,
         course: courseReducer,
+        groups: groupReducer,
     },
 
 });

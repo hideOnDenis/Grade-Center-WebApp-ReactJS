@@ -115,6 +115,25 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
         </Grid>
+        <Grid item xs={12} sm={4}>
+          {" "}
+          {/* New Study Groups grid */}
+          <Card>
+            <CardContent>
+              <Typography variant="h5" component="h2">
+                Study Groups
+              </Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{ mt: 2 }}
+                onClick={() => navigate("/admin/studygroups")}
+              >
+                Manage Study Groups
+              </Button>
+            </CardContent>
+          </Card>
+        </Grid>
       </Grid>
       <UserInfo />
     </Box>
