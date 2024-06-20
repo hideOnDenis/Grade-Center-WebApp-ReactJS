@@ -8,6 +8,10 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
@@ -17,7 +21,14 @@ import { fetchTeacherDetails } from "../features/teachers/teacherSlice";
 import {
   fetchAllAbsences,
   deleteAbsence,
+  addAbsence,
 } from "../features/absences/absenceSlice";
+import {
+  fetchGradesByStudentId,
+  createGrade,
+  deleteGrade,
+} from "../features/grades/gradeSlice";
+import { fetchStudentCourses } from "../features/courses/courseSlice";
 
 export default function StudentsPageTeacher() {
   const navigate = useNavigate();
@@ -31,18 +42,23 @@ export default function StudentsPageTeacher() {
   const { teacherDetails, status: teacherStatus } = useSelector(
     (state) => state.teachers
   );
+  const { studentCourses } = useSelector((state) => state.course);
+  const { grades } = useSelector((state) => state.grades);
 
   const [openGrade, setOpenGrade] = useState(false);
   const [openAbsence, setOpenAbsence] = useState(false);
+  const [openDeleteGrade, setOpenDeleteGrade] = useState(false);
   const [gradeData, setGradeData] = useState({
     studentId: "",
     grade: "",
+    courseId: "",
   });
   const [absenceData, setAbsenceData] = useState({
     studentId: "",
     date: "",
-    reason: "",
+    courseId: "",
   });
+  const [selectedStudentId, setSelectedStudentId] = useState("");
 
   useEffect(() => {
     dispatch(fetchTeacherDetails());
@@ -113,7 +129,7 @@ export default function StudentsPageTeacher() {
           <Button
             variant="contained"
             color="error"
-            onClick={() => handleDeleteGrade(params.row)}
+            onClick={() => handleOpenDeleteGrade(params.row.id)}
           >
             Delete Grade
           </Button>
@@ -132,6 +148,7 @@ export default function StudentsPageTeacher() {
 
   const handleOpenGrade = (student) => {
     setGradeData({ ...gradeData, studentId: student.id });
+    dispatch(fetchStudentCourses(student.id)); // Fetch courses for the student
     setOpenGrade(true);
   };
 
@@ -139,10 +156,19 @@ export default function StudentsPageTeacher() {
 
   const handleOpenAbsence = (student) => {
     setAbsenceData({ ...absenceData, studentId: student.id });
+    dispatch(fetchStudentCourses(student.id)); // Fetch courses for the student
     setOpenAbsence(true);
   };
 
   const handleCloseAbsence = () => setOpenAbsence(false);
+
+  const handleOpenDeleteGrade = (studentId) => {
+    setSelectedStudentId(studentId);
+    dispatch(fetchGradesByStudentId(studentId)); // Fetch grades for the student
+    setOpenDeleteGrade(true);
+  };
+
+  const handleCloseDeleteGrade = () => setOpenDeleteGrade(false);
 
   const handleGradeChange = (event) => {
     const { name, value } = event.target;
@@ -155,20 +181,39 @@ export default function StudentsPageTeacher() {
   };
 
   const handleGradeSubmit = () => {
-    console.log("Submitting grade data:", gradeData); // Debugging log
-    // Implement the submit logic here
-    handleCloseGrade();
+    dispatch(createGrade(gradeData))
+      .unwrap()
+      .then(() => {
+        dispatch(fetchGradesByStudentId(gradeData.studentId));
+        handleCloseGrade();
+      })
+      .catch((error) => {
+        console.error("Failed to create grade", error);
+      });
   };
 
   const handleAbsenceSubmit = () => {
-    console.log("Submitting absence data:", absenceData); // Debugging log
-    // Implement the submit logic here
-    handleCloseAbsence();
+    dispatch(addAbsence(absenceData))
+      .unwrap()
+      .then(() => {
+        dispatch(fetchAllAbsences());
+        handleCloseAbsence();
+      })
+      .catch((error) => {
+        console.error("Failed to add absence", error);
+      });
   };
 
-  const handleDeleteGrade = (student) => {
-    console.log("Deleting grade for student:", student.id); // Debugging log
-    // Implement the delete logic here
+  const handleDeleteGrade = (gradeId) => {
+    dispatch(deleteGrade(gradeId))
+      .unwrap()
+      .then(() => {
+        dispatch(fetchGradesByStudentId(selectedStudentId));
+        handleCloseDeleteGrade();
+      })
+      .catch((error) => {
+        console.error("Failed to delete grade", error);
+      });
   };
 
   return (
@@ -221,6 +266,21 @@ export default function StudentsPageTeacher() {
             onChange={handleGradeChange}
             inputProps={{ min: 2, max: 6 }}
           />
+          <FormControl fullWidth margin="dense">
+            <InputLabel>Course</InputLabel>
+            <Select
+              name="courseId"
+              value={gradeData.courseId}
+              onChange={handleGradeChange}
+              label="Course"
+            >
+              {studentCourses.map((course) => (
+                <MenuItem key={course.id} value={course.id}>
+                  {course.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseGrade}>Cancel</Button>
@@ -245,20 +305,49 @@ export default function StudentsPageTeacher() {
               shrink: true,
             }}
           />
-          <TextField
-            margin="dense"
-            name="reason"
-            label="Reason"
-            type="text"
-            fullWidth
-            variant="standard"
-            value={absenceData.reason}
-            onChange={handleAbsenceChange}
-          />
+          <FormControl fullWidth margin="dense">
+            <InputLabel>Course</InputLabel>
+            <Select
+              name="courseId"
+              value={absenceData.courseId}
+              onChange={handleAbsenceChange}
+              label="Course"
+            >
+              {studentCourses.map((course) => (
+                <MenuItem key={course.id} value={course.id}>
+                  {course.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseAbsence}>Cancel</Button>
           <Button onClick={handleAbsenceSubmit}>Submit</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openDeleteGrade} onClose={handleCloseDeleteGrade}>
+        <DialogTitle>Delete Grade</DialogTitle>
+        <DialogContent>
+          <FormControl fullWidth margin="dense">
+            <InputLabel>Grade</InputLabel>
+            <Select
+              name="gradeId"
+              value={gradeData.gradeId}
+              onChange={(e) => handleDeleteGrade(e.target.value)}
+              label="Grade"
+            >
+              {grades.map((grade) => (
+                <MenuItem key={grade.id} value={grade.id}>
+                  {`Course: ${grade.courseId}, Grade: ${grade.grade}`}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDeleteGrade}>Cancel</Button>
         </DialogActions>
       </Dialog>
     </Box>

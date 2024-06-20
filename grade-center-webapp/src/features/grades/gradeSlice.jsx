@@ -47,6 +47,47 @@ export const fetchGradesByStudent = createAsyncThunk(
   }
 );
 
+// Async thunk to create a grade
+export const createGrade = createAsyncThunk(
+  "grades/createGrade",
+  async (gradeData, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) throw new Error("No token found");
+      const response = await axios.post(`${domain}/grades`, gradeData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data;
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to create grade";
+      return rejectWithValue(message);
+    }
+  }
+);
+
+// Async thunk to delete a grade
+export const deleteGrade = createAsyncThunk(
+  "grades/deleteGrade",
+  async (gradeId, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.delete(`${domain}/grades/id=${gradeId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return gradeId;
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to delete grade";
+      return rejectWithValue(message);
+    }
+  }
+);
+
 const gradeSlice = createSlice({
   name: "grades",
   initialState: {
@@ -76,6 +117,30 @@ const gradeSlice = createSlice({
         state.grades = action.payload;
       })
       .addCase(fetchGradesByStudent.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(createGrade.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(createGrade.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.grades.push(action.payload);
+      })
+      .addCase(createGrade.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(deleteGrade.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(deleteGrade.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.grades = state.grades.filter(
+          (grade) => grade.id !== action.payload
+        );
+      })
+      .addCase(deleteGrade.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });

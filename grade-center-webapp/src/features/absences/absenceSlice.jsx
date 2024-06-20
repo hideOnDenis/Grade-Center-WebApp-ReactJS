@@ -27,7 +27,7 @@ export const fetchAbsencesByStudentId = createAsyncThunk(
   }
 );
 
-// Existing thunks
+// Async thunk to fetch absences
 export const fetchAbsencesByStudent = createAsyncThunk(
   "absences/fetchAbsencesByStudent",
   async (_, { rejectWithValue }) => {
@@ -49,6 +49,7 @@ export const fetchAbsencesByStudent = createAsyncThunk(
   }
 );
 
+// Async thunk to fetch all absences
 export const fetchAllAbsences = createAsyncThunk(
   "absences/fetchAllAbsences",
   async (_, { rejectWithValue }) => {
@@ -69,6 +70,7 @@ export const fetchAllAbsences = createAsyncThunk(
   }
 );
 
+// Async thunk to delete an absence
 export const deleteAbsence = createAsyncThunk(
   "absences/deleteAbsence",
   async (id, { rejectWithValue }) => {
@@ -83,6 +85,27 @@ export const deleteAbsence = createAsyncThunk(
         error.response?.data?.message ||
         error.message ||
         "Failed to delete absence";
+      return rejectWithValue(message);
+    }
+  }
+);
+
+// Async thunk to add an absence
+export const addAbsence = createAsyncThunk(
+  "absences/addAbsence",
+  async (absenceData, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) throw new Error("No token found");
+      const response = await axios.post(`${domain}/absences`, absenceData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data;
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to add absence";
       return rejectWithValue(message);
     }
   }
@@ -141,6 +164,17 @@ const absenceSlice = createSlice({
         );
       })
       .addCase(deleteAbsence.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(addAbsence.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(addAbsence.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.absences.push(action.payload);
+      })
+      .addCase(addAbsence.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });

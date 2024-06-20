@@ -24,10 +24,35 @@ export const fetchCourseById = createAsyncThunk(
   }
 );
 
+// Async thunk to fetch student's courses
+export const fetchStudentCourses = createAsyncThunk(
+  "course/fetchStudentCourses",
+  async (studentId, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) throw new Error("No token found");
+      const response = await axios.get(
+        `${domain}/subjects/studentId=${studentId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to fetch student courses";
+      return rejectWithValue(message);
+    }
+  }
+);
+
 const courseSlice = createSlice({
   name: "course",
   initialState: {
     course: null,
+    studentCourses: [],
     status: "idle",
     error: null,
   },
@@ -42,6 +67,17 @@ const courseSlice = createSlice({
         state.course = action.payload;
       })
       .addCase(fetchCourseById.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(fetchStudentCourses.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchStudentCourses.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.studentCourses = action.payload;
+      })
+      .addCase(fetchStudentCourses.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });
