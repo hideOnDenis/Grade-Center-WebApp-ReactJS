@@ -84,7 +84,7 @@ export default function WeeklyScheduleParent() {
               <TableCell>Day</TableCell>
               <TableCell>Time</TableCell>
               <TableCell>Subject</TableCell>
-              <TableCell>Teacher</TableCell>
+              <TableCell>Study Group</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

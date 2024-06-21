@@ -55,9 +55,9 @@ export default function StudentDashboard() {
           <Card>
             <CardContent>
               <Typography variant="h5" component="h2">
-                Recent Grade
+                Grades
               </Typography>
-              <Typography variant="h6">{studentInfo.grades.recent}</Typography>
+              <Typography variant="h6"></Typography>
               <Button
                 variant="contained"
                 color="primary"
@@ -73,7 +73,7 @@ export default function StudentDashboard() {
           <Card>
             <CardContent>
               <Typography variant="h5" component="h2">
-                Next Class
+                Classes
               </Typography>
               <Typography variant="h6">{studentInfo.nextClass.name}</Typography>
               <Typography color="text.secondary">

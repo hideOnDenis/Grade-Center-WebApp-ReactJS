@@ -13,6 +13,16 @@ export default function SchedulePageParent() {
     dispatch(fetchParentData());
   }, [dispatch]);
 
+  // Функция за премахване на дублиращите се ученици
+  const uniqueStudents = (students) => {
+    const seen = new Set();
+    return students.filter((student) => {
+      const duplicate = seen.has(student.studentId);
+      seen.add(student.studentId);
+      return !duplicate;
+    });
+  };
+
   return (
     <Box sx={{ width: "100%", overflow: "hidden", position: "relative" }}>
       <Typography variant="h4" sx={{ m: 2 }}>
@@ -33,7 +43,7 @@ export default function SchedulePageParent() {
       )}
       {status === "succeeded" &&
         parentData &&
-        parentData.students.map((child) => (
+        uniqueStudents(parentData.students).map((child) => (
           <Paper
             key={child.studentId}
             elevation={3}
