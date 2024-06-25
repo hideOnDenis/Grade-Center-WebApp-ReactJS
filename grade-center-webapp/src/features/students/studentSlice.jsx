@@ -179,7 +179,6 @@ const studentSlice = createSlice({
       })
       .addCase(addStudentToStudyGroup.fulfilled, (state, action) => {
         state.status = "succeeded";
-        // Optionally update the state to reflect the change
       })
       .addCase(addStudentToStudyGroup.rejected, (state, action) => {
         state.status = "failed";

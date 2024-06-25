@@ -270,7 +270,6 @@ const teacherSlice = createSlice({
       })
       .addCase(assignTeacherToSchool.fulfilled, (state, action) => {
         state.status = "succeeded";
-        // Optionally update state to reflect changes
       })
       .addCase(assignTeacherToSchool.rejected, (state, action) => {
         state.status = "failed";
@@ -281,7 +280,6 @@ const teacherSlice = createSlice({
       })
       .addCase(removeTeacherFromSchool.fulfilled, (state, action) => {
         state.status = "succeeded";
-        // Optionally update state to reflect changes
       })
       .addCase(removeTeacherFromSchool.rejected, (state, action) => {
         state.status = "failed";

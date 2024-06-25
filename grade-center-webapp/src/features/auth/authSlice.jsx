@@ -37,6 +37,7 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+// Async thunk to fetch the current user's data
 export const loadUser = createAsyncThunk(
   "auth/loadUser",
   async (_, { getState, rejectWithValue }) => {

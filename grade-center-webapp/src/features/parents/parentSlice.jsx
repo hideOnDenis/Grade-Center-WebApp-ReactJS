@@ -3,7 +3,7 @@ import axios from "axios";
 
 const domain = "http://localhost:8082";
 
-// Async thunk to fetch parent data
+// Async thunk to fetch current parent data
 export const fetchParentData = createAsyncThunk(
   "parent/fetchParentData",
   async (_, { rejectWithValue }) => {

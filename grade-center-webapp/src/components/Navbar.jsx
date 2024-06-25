@@ -32,10 +32,10 @@ export default function Navbar() {
             color="inherit"
             onClick={() => navigate("/login")}
             style={{
-              backgroundColor: "#2196f3", // A contrasting color for the button
+              backgroundColor: "#2196f3",
               color: "white", // Text color
-              fontWeight: "bold", // Make text bold
-              padding: "8px 20px", // Increase padding for a larger button
+              fontWeight: "bold",
+              padding: "8px 20px",
             }}
           >
             Login

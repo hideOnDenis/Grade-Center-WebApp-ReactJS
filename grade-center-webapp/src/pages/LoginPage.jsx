@@ -14,20 +14,20 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useNavigate } from "react-router-dom"; // React Router hook
+import { useNavigate } from "react-router-dom";
 import Copyright from "../components/Copyright.jsx";
 
 const defaultTheme = createTheme();
 
 export default function LoginPage() {
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const credentials = {
-      username: data.get("username"), // Ensure this matches the name attribute of your input field
+      username: data.get("username"),
       password: data.get("password"),
     };
     console.log("Logging in with:", credentials); // Log credentials for debugging

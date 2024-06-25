@@ -11,7 +11,7 @@ import {
   Button,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import UserInfo from "../components/UserInfo"; // Import the UserInfo component
+import UserInfo from "../components/UserInfo";
 
 export default function ParentDashboard() {
   const navigate = useNavigate();
@@ -51,7 +51,7 @@ export default function ParentDashboard() {
           </Card>
         </Grid>
       </Grid>
-      <UserInfo /> {/* Include the UserInfo component */}
+      <UserInfo />
     </Box>
   );
 }

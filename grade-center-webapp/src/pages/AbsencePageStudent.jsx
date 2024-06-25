@@ -64,7 +64,7 @@ export default function AbsencePageStudent() {
 
   const handleSubmit = () => {
     console.log("Submitting absence data:", absenceData); // Debugging log
-    // Implement the submit logic here
+
     handleClose();
   };
 

@@ -27,7 +27,7 @@ export const fetchGradesByStudentId = createAsyncThunk(
   }
 );
 
-// Existing thunk to fetch grades by the logged-in student
+// Async thunk to fetch grades by the logged-in student
 export const fetchGradesByStudent = createAsyncThunk(
   "grades/fetchGradesByStudent",
   async (_, { rejectWithValue }) => {

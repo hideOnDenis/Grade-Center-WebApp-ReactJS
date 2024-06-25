@@ -46,7 +46,7 @@ export default function GradesPageStudent() {
 
   const handleSubmit = () => {
     console.log("Submitting grade data:", gradeData); // Debugging log
-    // Implement the submit logic here
+
     handleClose();
   };
 

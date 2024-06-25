@@ -10,7 +10,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUsers } from "../features/users/userSlice";
-import { fetchStudents } from "../features/students/studentSlice"; // Import fetchStudents action
+import { fetchStudents } from "../features/students/studentSlice";
 import UserInfo from "../components/UserInfo";
 
 export default function AdminDashboard() {
@@ -84,7 +84,6 @@ export default function AdminDashboard() {
         </Grid>
         <Grid item xs={12} sm={4}>
           {" "}
-          {/* New Students grid */}
           <Card>
             <CardContent>
               <Typography variant="h5" component="h2">
@@ -117,7 +116,6 @@ export default function AdminDashboard() {
         </Grid>
         <Grid item xs={12} sm={4}>
           {" "}
-          {/* New Study Groups grid */}
           <Card>
             <CardContent>
               <Typography variant="h5" component="h2">

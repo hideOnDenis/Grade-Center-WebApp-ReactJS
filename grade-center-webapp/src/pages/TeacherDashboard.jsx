@@ -7,11 +7,11 @@ import {
   Grid,
   Button,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
-import UserInfo from "../components/UserInfo"; // Adjust the import path as necessary
+import { useNavigate } from "react-router-dom";
+import UserInfo from "../components/UserInfo";
 
 export default function TeacherDashboard() {
-  const navigate = useNavigate(); // Initialize the navigate function
+  const navigate = useNavigate();
 
   // Mock data for demonstration
   const todayClasses = [
@@ -25,7 +25,6 @@ export default function TeacherDashboard() {
 
   const handleViewSchedule = () => {
     console.log("View schedule clicked");
-    // Navigation to full schedule page
   };
 
   return (

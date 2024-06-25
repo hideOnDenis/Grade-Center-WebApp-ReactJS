@@ -7,10 +7,10 @@ import {
   Grid,
   Button,
 } from "@mui/material";
-import UserInfo from "../components/UserInfo"; // Adjust the import path as necessary
+import UserInfo from "../components/UserInfo";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAbsencesByStudent } from "../features/absences/absenceSlice"; // Adjust the import path as necessary
+import { fetchAbsencesByStudent } from "../features/absences/absenceSlice";
 
 export default function StudentDashboard() {
   const navigate = useNavigate();
@@ -62,7 +62,7 @@ export default function StudentDashboard() {
                 variant="contained"
                 color="primary"
                 sx={{ mt: 2 }}
-                onClick={() => navigate("/student/grades")} // Ensure this matches the correct route
+                onClick={() => navigate("/student/grades")}
               >
                 View All Grades
               </Button>
@@ -83,7 +83,7 @@ export default function StudentDashboard() {
                 variant="contained"
                 color="secondary"
                 sx={{ mt: 2 }}
-                onClick={() => navigate("/student/schedule")} // Ensure this matches the correct route
+                onClick={() => navigate("/student/schedule")}
               >
                 View Full Schedule
               </Button>
@@ -100,7 +100,7 @@ export default function StudentDashboard() {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => navigate("/student/absences")} // Ensure this matches the correct route
+                onClick={() => navigate("/student/absences")}
                 sx={{ mt: 2 }}
               >
                 View All Absences

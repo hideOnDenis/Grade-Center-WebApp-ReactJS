@@ -30,7 +30,6 @@ function HomePage() {
         position: "relative",
       }}
     >
-      {/* Background image */}
       <img
         src={gradeImage}
         alt="Grade Center WebApp React"
@@ -43,7 +42,7 @@ function HomePage() {
           left: 0,
         }}
       />
-      {/* Text overlay */}
+
       <div
         style={{
           position: "absolute",
@@ -55,12 +54,12 @@ function HomePage() {
           width: "100%",
           fontSize: "2rem",
           fontWeight: "bold",
-          textShadow: "2px 2px 4px rgba(0,0,0,0.6)", // Adding text shadow for better readability
+          textShadow: "2px 2px 4px rgba(0,0,0,0.6)",
         }}
       >
         Grade Center WebApp React
       </div>
-      {/* Navbar rendered last to naturally stack on top */}
+
       <Navbar
         style={{
           width: "100%",
